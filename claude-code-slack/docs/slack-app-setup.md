@@ -31,7 +31,7 @@ Go to **Features** > **Slash Commands** > **Create New Command**:
 
 | Field | Value |
 |-------|-------|
-| Command | `/model` |
+| Command | `/yuki-model` |
 | Short Description | Switch Claude model (sonnet, opus, haiku) |
 | Usage Hint | `[sonnet\|opus\|haiku]` |
 
