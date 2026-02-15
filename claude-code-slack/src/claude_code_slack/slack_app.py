@@ -19,7 +19,7 @@ model_store = ModelStore()
 def create_app() -> App:
     app = App(token=slack_bot_token())
 
-    @app.command("/model")
+    @app.command("/yuki-model")
     def handle_model_command(ack, command, respond):
         ack()
         channel = command["channel_id"]
@@ -28,7 +28,7 @@ def create_app() -> App:
         if not arg:
             current = model_store.get(channel) or "default (set by CLI)"
             models_list = ", ".join(sorted(VALID_MODELS))
-            respond(f"Current model: *{current}*\nUsage: `/model [{models_list}]`")
+            respond(f"Current model: *{current}*\nUsage: `/yuki-model [{models_list}]`")
             return
 
         if arg not in VALID_MODELS:
@@ -53,6 +53,7 @@ def create_app() -> App:
         ts = event["ts"]
         thread_ts = event.get("thread_ts")
         model = model_store.get(channel)
+        logger.info(f"Received message in channel={channel}, channel_type={event.get('channel_type')}, ts={ts}")
 
         # Add hourglass reaction while processing
         try:
@@ -70,12 +71,14 @@ def create_app() -> App:
             result = run_claude(text, session_id=session_id, model=model)
             if result.session_id:
                 store.set(thread_ts, result.session_id)
+            logger.info(f"Posting thread reply to channel={channel}, thread_ts={thread_ts}")
             say(text=result.text, thread_ts=thread_ts)
         else:
             # New top-level message — start new session
             result = run_claude(text, model=model)
             if result.session_id:
                 store.set(ts, result.session_id)
+            logger.info(f"Posting new message to channel={channel}, thread_ts={ts}")
             say(text=result.text, thread_ts=ts)
 
         _remove_reaction(client, channel, ts)
