@@ -12,6 +12,7 @@ load_dotenv(_project_root / ".env", override=True)
 
 DATA_DIR = Path(os.environ.get("CLAUDE_CODE_SLACK_DATA_DIR", Path.home() / ".claude-code-slack"))
 SESSIONS_FILE = DATA_DIR / "sessions.json"
+MODELS_FILE = DATA_DIR / "models.json"
 LOG_FILE = DATA_DIR / "daemon.log"
 ERR_LOG_FILE = DATA_DIR / "daemon.err.log"
 PLIST_LABEL = "com.user.claude-code-slack"
