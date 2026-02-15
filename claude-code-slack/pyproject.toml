@@ -1,0 +1,24 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "claude-code-slack"
+version = "0.1.0"
+description = "Bridge Slack messages to Claude Code CLI"
+requires-python = ">=3.11"
+dependencies = [
+    "slack-bolt>=1.18.0",
+    "python-dotenv>=1.0.0",
+]
+
+[project.scripts]
+claude-code-slack = "claude_code_slack.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/claude_code_slack"]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0.0",
+]
