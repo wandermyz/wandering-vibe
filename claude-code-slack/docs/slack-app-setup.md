@@ -23,8 +23,21 @@ Go to **OAuth & Permissions** > **Scopes** > **Bot Token Scopes** and add:
 - `im:history` — Read DMs
 - `mpim:history` — Read group DMs
 - `reactions:write` — Add/remove emoji reactions
+- `commands` — Add slash commands
 
-## 4. Subscribe to Events
+## 4. Add Slash Commands
+
+Go to **Features** > **Slash Commands** > **Create New Command**:
+
+| Field | Value |
+|-------|-------|
+| Command | `/model` |
+| Short Description | Switch Claude model (sonnet, opus, haiku) |
+| Usage Hint | `[sonnet\|opus\|haiku]` |
+
+No **Request URL** is needed — Socket Mode handles delivery automatically.
+
+## 5. Subscribe to Events
 
 Go to **Event Subscriptions** > **Subscribe to bot events** and add:
 
@@ -33,13 +46,16 @@ Go to **Event Subscriptions** > **Subscribe to bot events** and add:
 - `message.im` — Direct messages
 - `message.mpim` — Group direct messages
 
-## 5. Install to Workspace
+## 6. Install to Workspace
 
 1. Go to **OAuth & Permissions**
 2. Click **Install to Workspace** and authorize
 3. Copy the **Bot User OAuth Token** as `SLACK_BOT_TOKEN` (starts with `xoxb-`)
 
-## 6. Configure Environment
+> **Note:** If you added scopes or commands after the initial install, you must
+> **reinstall the app** for the changes to take effect.
+
+## 7. Configure Environment
 
 Create a `.env` file in the project root:
 
@@ -48,6 +64,6 @@ SLACK_BOT_TOKEN=xoxb-your-token
 SLACK_APP_TOKEN=xapp-your-token
 ```
 
-## 7. Invite the Bot
+## 8. Invite the Bot
 
 Invite the bot to a channel: `/invite @Claude Code Bot`

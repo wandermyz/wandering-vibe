@@ -21,6 +21,7 @@ def run_claude(
     prompt: str,
     session_id: str | None = None,
     timeout: int | None = None,
+    model: str | None = None,
 ) -> ClaudeResult:
     """Run claude CLI and return the result.
 
@@ -28,6 +29,7 @@ def run_claude(
         prompt: The prompt text to send.
         session_id: Optional session ID to resume.
         timeout: Timeout in seconds (defaults to CLAUDE_TIMEOUT).
+        model: Optional model alias (e.g. "sonnet", "opus", "haiku").
     """
     cmd = [
         "claude",
@@ -35,6 +37,8 @@ def run_claude(
         "--dangerously-skip-permissions",
         "--output-format", "json",
     ]
+    if model:
+        cmd.extend(["--model", model])
     if session_id:
         cmd.extend(["-r", session_id])
     cmd.append(prompt)
