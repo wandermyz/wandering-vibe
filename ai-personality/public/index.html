@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Personality</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a0a0f;
+      color: #e0e0e0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    #canvas-container {
+      flex: 1;
+      position: relative;
+    }
+    canvas { display: block; }
+    #ui-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 20px;
+      background: linear-gradient(transparent, rgba(10,10,15,0.95));
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    #transcript {
+      max-width: 600px;
+      width: 100%;
+      min-height: 40px;
+      padding: 12px 16px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 12px;
+      font-size: 14px;
+      line-height: 1.5;
+      max-height: 120px;
+      overflow-y: auto;
+      text-align: center;
+    }
+    #response-text {
+      max-width: 600px;
+      width: 100%;
+      min-height: 40px;
+      padding: 12px 16px;
+      background: rgba(100,140,255,0.1);
+      border: 1px solid rgba(100,140,255,0.2);
+      border-radius: 12px;
+      font-size: 14px;
+      line-height: 1.5;
+      max-height: 150px;
+      overflow-y: auto;
+      text-align: center;
+    }
+    #controls {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    button {
+      padding: 12px 28px;
+      border: none;
+      border-radius: 24px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    #mic-btn {
+      background: #4a6cf7;
+      color: white;
+    }
+    #mic-btn:hover { background: #3a5ce5; }
+    #mic-btn.listening {
+      background: #f74a4a;
+      animation: pulse 1.5s infinite;
+    }
+    #text-input {
+      padding: 12px 16px;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 24px;
+      background: rgba(255,255,255,0.05);
+      color: #e0e0e0;
+      font-size: 14px;
+      width: 300px;
+      outline: none;
+    }
+    #text-input:focus { border-color: #4a6cf7; }
+    #send-btn {
+      background: #4a6cf7;
+      color: white;
+    }
+    #status {
+      font-size: 12px;
+      color: #888;
+    }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(247,74,74,0.4); }
+      50% { box-shadow: 0 0 0 12px rgba(247,74,74,0); }
+    }
+  </style>
+</head>
+<body>
+  <div id="canvas-container"></div>
+  <div id="ui-overlay">
+    <div id="response-text">AI response will appear here...</div>
+    <div id="transcript">Click the mic or type to talk...</div>
+    <div id="controls">
+      <button id="mic-btn">🎤 Speak</button>
+      <input id="text-input" type="text" placeholder="Or type your message...">
+      <button id="send-btn">Send</button>
+    </div>
+    <div id="status">Ready</div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
