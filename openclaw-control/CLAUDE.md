@@ -6,6 +6,9 @@ Control and configuration helpers for the local OpenClaw gateway.
 
 OpenClaw is a self-hosted gateway that bridges messaging platforms (Slack, WhatsApp, iMessage, Telegram, Discord) to AI coding agents. It runs as a local daemon (`ai.openclaw.gateway` via launchd).
 
+- **Docs**: https://docs.openclaw.ai
+- **Quickstart**: https://docs.openclaw.ai/start/quickstart
+
 ## Key Paths
 
 | Path | Description |
