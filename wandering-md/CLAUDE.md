@@ -29,6 +29,10 @@ xcodebuild test -project wandering-md.xcodeproj -scheme wandering-md -destinatio
 
 Or use Cmd+U in Xcode.
 
+## Conventions
+
+- Bundle identifiers should start with `com.wandermyz.`
+
 ## Bundle ID
 
-`com.wanderingvibe.wanderingmd`
+`com.wandermyz.wandering-md`
