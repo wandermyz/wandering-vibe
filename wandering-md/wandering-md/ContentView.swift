@@ -1,8 +1,8 @@
 import SwiftUI
 
 struct ContentView: View {
-    let markdownContent: String?
-    let fileName: String?
+    @Binding var markdownContent: String?
+    @Binding var fileName: String?
 
     var body: some View {
         if let content = markdownContent {
@@ -10,13 +10,27 @@ struct ContentView: View {
                 MarkdownView(markdown: content)
                     .navigationTitle(fileName ?? "Markdown")
                     .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .navigationBarLeading) {
+                            Button {
+                                markdownContent = nil
+                                fileName = nil
+                            } label: {
+                                Image(systemName: "xmark")
+                            }
+                        }
+                    }
             }
         } else {
-            VStack(spacing: 16) {
+            VStack(spacing: 20) {
                 Image(systemName: "doc.text")
                     .font(.system(size: 48))
                     .foregroundStyle(.secondary)
-                Text("Open a Markdown file using the Share button")
+                Text("No Markdown File Open")
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                Text("Use the Share button from Files, Safari,\nor other apps to open a .md file here.")
+                    .multilineTextAlignment(.center)
                     .foregroundStyle(.secondary)
             }
         }

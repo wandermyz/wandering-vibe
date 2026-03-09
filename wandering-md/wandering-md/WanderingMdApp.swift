@@ -7,7 +7,7 @@ struct WanderingMdApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView(markdownContent: markdownContent, fileName: fileName)
+            ContentView(markdownContent: $markdownContent, fileName: $fileName)
                 .onOpenURL { url in
                     let accessing = url.startAccessingSecurityScopedResource()
                     defer { if accessing { url.stopAccessingSecurityScopedResource() } }
