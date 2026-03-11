@@ -1,0 +1,68 @@
+---
+name: cron
+description: >
+  Manage personal cron tasks and reminders. Use when the user says "cron",
+  "remind me", "schedule", "recurring", or wants to add, edit, list, or remove
+  a scheduled task.
+argument-hint: "[what to schedule]"
+allowed-tools: Read, Write, Edit, Bash
+---
+
+# Cron Task Manager
+
+Cron tasks are defined in `~/.yuki_workspace/cron.yaml` and run automatically
+by the claude-code-slack daemon. Changes take effect within 30 seconds — no
+restart needed.
+
+## List current tasks
+
+Read the file and show all tasks with their schedule and description:
+
+```bash
+cat ~/.yuki_workspace/cron.yaml
+```
+
+## Add or edit a task
+
+Edit `~/.yuki_workspace/cron.yaml`. Each task has:
+
+```yaml
+tasks:
+  - name: unique-task-name          # identifier, no spaces
+    schedule: "0 9 * * 1-5"        # cron expression
+    description: "Human label"      # shown in Slack when it fires
+    prompt: >                       # what Claude Code will be asked to do
+      Your prompt here.
+```
+
+### Common schedule expressions
+
+| Schedule | Expression |
+|---|---|
+| Every minute | `* * * * *` |
+| Every hour | `0 * * * *` |
+| Daily at 9am | `0 9 * * *` |
+| Weekdays at 9am | `0 9 * * 1-5` |
+| Mondays at 10am | `0 10 * * 1` |
+| Every 30 minutes | `*/30 * * * *` |
+
+Format: `minute hour day-of-month month day-of-week`
+
+## Remove a task
+
+Delete the task's entry from `~/.yuki_workspace/cron.yaml`.
+
+## How it works
+
+When a cron fires, the daemon:
+1. Posts a new Slack thread in the configured cron channel with the task name
+2. Runs Claude Code with the prompt
+3. Posts the result as a thread reply
+4. The thread is session-tracked — you can reply to continue the conversation
+
+## User request: $ARGUMENTS
+
+Help the user with the above. If they want to add or modify a task, read the
+current `~/.yuki_workspace/cron.yaml` first, then make the change with Edit or
+Write. Show them the final cron expression and confirm what it means in plain
+English.
