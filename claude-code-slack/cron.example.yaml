@@ -8,7 +8,18 @@
 #   prompt:      The prompt to send to Claude Code
 
 tasks:
-  - name: test-heartbeat
-    schedule: "* * * * *"
-    description: "Test heartbeat (every minute)"
-    prompt: "Say hello and tell me the current time. Keep it brief."
+  - name: morning-briefing
+    schedule: "0 9 * * 1-5"
+    description: "Morning briefing (weekdays at 9am)"
+    prompt: >
+      Give me a concise morning briefing: check for any uncommitted changes or
+      open TODOs in the codebase, summarize the git log from the past 24 hours,
+      and suggest the top 1-2 things to focus on today.
+
+  - name: daily-dependency-check
+    schedule: "0 10 * * 1"
+    description: "Weekly dependency check (Mondays at 10am)"
+    prompt: >
+      Check for outdated dependencies across all projects in this monorepo.
+      List any packages with newer versions available and flag any known
+      security advisories. Keep the summary brief.
