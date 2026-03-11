@@ -1,0 +1,14 @@
+# Example cron tasks configuration for claude-code-slack.
+# Copy this file to ~/.yuki_workspace/cron.yaml and edit as needed.
+#
+# Each task has:
+#   name:        Unique identifier for the task
+#   schedule:    Cron expression (minute hour day month weekday)
+#   description: Human-readable description shown in Slack
+#   prompt:      The prompt to send to Claude Code
+
+tasks:
+  - name: test-heartbeat
+    schedule: "* * * * *"
+    description: "Test heartbeat (every minute)"
+    prompt: "Say hello and tell me the current time. Keep it brief."

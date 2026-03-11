@@ -10,6 +10,8 @@ requires-python = ">=3.11"
 dependencies = [
     "slack-bolt>=1.18.0",
     "python-dotenv>=1.0.0",
+    "pyyaml>=6.0",
+    "croniter>=1.4.0",
 ]
 
 [project.scripts]

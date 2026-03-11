@@ -7,6 +7,7 @@ from slack_bolt.adapter.socket_mode import SocketModeHandler
 
 from claude_code_slack.claude_runner import run_claude
 from claude_code_slack.config import slack_app_token, slack_bot_token
+from claude_code_slack.cron_scheduler import start_cron_scheduler
 from claude_code_slack.model_store import VALID_MODELS, ModelStore
 from claude_code_slack.session_store import SessionStore
 
@@ -97,6 +98,10 @@ def start() -> None:
     """Start the Slack bot in Socket Mode (blocking)."""
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(levelname)s %(message)s")
     app = create_app()
+
+    # Start cron scheduler with the Slack Web API client
+    start_cron_scheduler(app.client)
+
     handler = SocketModeHandler(app, slack_app_token())
     logger.info("Starting claude-code-slack in Socket Mode...")
     handler.start()
