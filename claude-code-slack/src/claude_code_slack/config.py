@@ -18,8 +18,18 @@ ERR_LOG_FILE = DATA_DIR / "daemon.err.log"
 PLIST_LABEL = "com.user.claude-code-slack"
 PLIST_PATH = Path.home() / "Library" / "LaunchAgents" / f"{PLIST_LABEL}.plist"
 
+WORKSPACE_DIR = Path.home() / ".yuki_workspace"
+CRON_FILE = WORKSPACE_DIR / "cron.yaml"
+
 CLAUDE_TIMEOUT = int(os.environ.get("CLAUDE_TIMEOUT", "300"))
 CLAUDE_WORKING_DIR = os.environ.get("CLAUDE_WORKING_DIR", str(Path.home() / "Projects" / "wandering-vibe"))
+
+
+def slack_cron_channel() -> str:
+    channel = os.environ.get("SLACK_CRON_CHANNEL", "")
+    if not channel:
+        raise RuntimeError("SLACK_CRON_CHANNEL not set")
+    return channel
 
 
 def slack_bot_token() -> str:

@@ -1,0 +1,160 @@
+"""Cron scheduler that reads tasks from workspace YAML and triggers Claude runs."""
+
+import logging
+import threading
+from dataclasses import dataclass
+from datetime import datetime
+
+import yaml
+from croniter import croniter
+
+from claude_code_slack.claude_runner import run_claude
+from claude_code_slack.config import CRON_FILE, WORKSPACE_DIR, slack_cron_channel
+from claude_code_slack.session_store import SessionStore
+
+logger = logging.getLogger(__name__)
+
+store = SessionStore()
+
+
+@dataclass
+class CronTask:
+    name: str
+    schedule: str
+    description: str
+    prompt: str
+
+
+def _ensure_workspace() -> None:
+    """Create the workspace directory if it doesn't exist."""
+    WORKSPACE_DIR.mkdir(parents=True, exist_ok=True)
+    logger.info(f"Workspace directory ensured at {WORKSPACE_DIR}")
+
+
+def _load_cron_tasks() -> list[CronTask]:
+    """Load cron tasks from the workspace YAML file."""
+    if not CRON_FILE.exists():
+        logger.info(f"No cron file found at {CRON_FILE}, skipping cron scheduling")
+        return []
+
+    with open(CRON_FILE) as f:
+        data = yaml.safe_load(f)
+
+    if not data or "tasks" not in data:
+        logger.warning(f"Cron file {CRON_FILE} has no 'tasks' key")
+        return []
+
+    tasks = []
+    for entry in data["tasks"]:
+        try:
+            task = CronTask(
+                name=entry["name"],
+                schedule=entry["schedule"],
+                description=entry.get("description", ""),
+                prompt=entry["prompt"],
+            )
+            # Validate cron expression
+            croniter(task.schedule)
+            tasks.append(task)
+        except (KeyError, ValueError) as e:
+            logger.error(f"Invalid cron task entry: {entry} — {e}")
+
+    logger.info(f"Loaded {len(tasks)} cron task(s) from {CRON_FILE}")
+    return tasks
+
+
+def _run_cron_task(task: CronTask, slack_client) -> None:
+    """Execute a single cron task: post to Slack, run Claude, post result."""
+    channel = slack_cron_channel()
+
+    # Post initial message to start a new thread
+    header = f":alarm_clock: *Cron: {task.description or task.name}*\n> Running: `{task.prompt[:200]}`"
+    try:
+        response = slack_client.chat_postMessage(channel=channel, text=header)
+        thread_ts = response["ts"]
+    except Exception:
+        logger.error(f"Failed to post cron start message for task={task.name}", exc_info=True)
+        return
+
+    # Run Claude with the cron prompt
+    result = run_claude(task.prompt)
+
+    # Store session for potential follow-up in the thread
+    if result.session_id:
+        store.set(thread_ts, result.session_id)
+
+    # Post the result as a thread reply
+    try:
+        slack_client.chat_postMessage(channel=channel, text=result.text, thread_ts=thread_ts)
+    except Exception:
+        logger.error(f"Failed to post cron result for task={task.name}", exc_info=True)
+
+
+def _build_task_state(tasks: list[CronTask]) -> tuple[list[tuple[CronTask, croniter]], dict[str, datetime]]:
+    """Build croniter instances and next-fire-time map from a task list."""
+    iters = [(task, croniter(task.schedule, datetime.now())) for task in tasks]
+    next_times = {task.name: it.get_next(datetime) for task, it in iters}
+    return iters, next_times
+
+
+def _tasks_changed(old: list[CronTask], new: list[CronTask]) -> bool:
+    """Check if the task list has changed (by comparing as tuples)."""
+    to_tuple = lambda t: (t.name, t.schedule, t.description, t.prompt)
+    return [to_tuple(t) for t in old] != [to_tuple(t) for t in new]
+
+
+def _scheduler_loop(slack_client, stop_event: threading.Event) -> None:
+    """Main loop that reloads cron file every cycle and fires due tasks."""
+    current_tasks: list[CronTask] = []
+    iters: list[tuple[CronTask, croniter]] = []
+    next_times: dict[str, datetime] = {}
+
+    while not stop_event.is_set():
+        # Reload cron file and rebuild state if changed
+        new_tasks = _load_cron_tasks()
+        if _tasks_changed(current_tasks, new_tasks):
+            current_tasks = new_tasks
+            if current_tasks:
+                iters, next_times = _build_task_state(current_tasks)
+                logger.info(f"Cron tasks reloaded: {[t.name for t in current_tasks]}")
+            else:
+                iters, next_times = [], {}
+                logger.info("Cron tasks cleared")
+
+        # Check and fire due tasks
+        now = datetime.now()
+        for task, it in iters:
+            fire_at = next_times.get(task.name)
+            if fire_at and now >= fire_at:
+                logger.info(f"Cron firing task={task.name} (scheduled={fire_at})")
+                threading.Thread(
+                    target=_run_cron_task,
+                    args=(task, slack_client),
+                    name=f"cron-{task.name}",
+                    daemon=True,
+                ).start()
+                next_times[task.name] = it.get_next(datetime)
+
+        stop_event.wait(timeout=30)
+
+
+def start_cron_scheduler(slack_client) -> threading.Event:
+    """Initialize workspace and start the cron scheduler thread.
+
+    The scheduler reloads ~/.yuki_workspace/cron.yaml every 30 seconds,
+    so changes take effect without restarting the daemon.
+
+    Returns a stop_event that can be set to stop the scheduler.
+    """
+    _ensure_workspace()
+
+    stop_event = threading.Event()
+    thread = threading.Thread(
+        target=_scheduler_loop,
+        args=(slack_client, stop_event),
+        name="cron-scheduler",
+        daemon=True,
+    )
+    thread.start()
+    logger.info("Cron scheduler started")
+    return stop_event
