@@ -20,6 +20,8 @@ PLIST_PATH = Path.home() / "Library" / "LaunchAgents" / f"{PLIST_LABEL}.plist"
 
 WORKSPACE_DIR = Path.home() / ".yuki_workspace"
 CRON_FILE = WORKSPACE_DIR / "cron.yaml"
+ATTACHMENTS_DIR = WORKSPACE_DIR / "attachments"
+UPLOADS_DIR = WORKSPACE_DIR / "uploads"
 
 CLAUDE_TIMEOUT = int(os.environ.get("CLAUDE_TIMEOUT", "300"))
 CLAUDE_WORKING_DIR = os.environ.get("CLAUDE_WORKING_DIR", str(Path.home() / "Projects" / "wandering-vibe"))

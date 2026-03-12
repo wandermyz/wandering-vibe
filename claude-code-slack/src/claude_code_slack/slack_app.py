@@ -1,12 +1,19 @@
 """Slack Bot Socket Mode handlers."""
 
 import logging
+import re
+import urllib.request
 
 from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
 
 from claude_code_slack.claude_runner import run_claude
-from claude_code_slack.config import slack_app_token, slack_bot_token
+from claude_code_slack.config import (
+    ATTACHMENTS_DIR,
+    UPLOADS_DIR,
+    slack_app_token,
+    slack_bot_token,
+)
 from claude_code_slack.cron_scheduler import start_cron_scheduler
 from claude_code_slack.model_store import VALID_MODELS, ModelStore
 from claude_code_slack.session_store import SessionStore
@@ -15,6 +22,67 @@ logger = logging.getLogger(__name__)
 
 store = SessionStore()
 model_store = ModelStore()
+
+_ATTACHMENT_RE = re.compile(r"<attachment>(.*?)</attachment>")
+
+
+def _download_slack_files(files: list[dict], bot_token: str) -> list[str]:
+    """Download Slack file attachments to the uploads directory.
+
+    Returns a list of saved file paths.
+    """
+    UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
+    saved: list[str] = []
+    for f in files:
+        url = f.get("url_private_download") or f.get("url_private")
+        if not url:
+            continue
+        name = f.get("name", "unknown")
+        dest = UPLOADS_DIR / name
+        # Deduplicate filenames
+        if dest.exists():
+            from pathlib import Path
+            base_stem = Path(name).stem
+            suffix = Path(name).suffix
+            counter = 1
+            while dest.exists():
+                dest = UPLOADS_DIR / f"{base_stem}_{counter}{suffix}"
+                counter += 1
+        try:
+            req = urllib.request.Request(url, headers={"Authorization": f"Bearer {bot_token}"})
+            with urllib.request.urlopen(req) as resp, open(dest, "wb") as out:
+                out.write(resp.read())
+            saved.append(str(dest))
+            logger.info(f"Downloaded Slack file {name} -> {dest}")
+        except Exception:
+            logger.error(f"Failed to download Slack file {name}", exc_info=True)
+    return saved
+
+
+def _extract_and_upload_attachments(text: str, client, channel: str, thread_ts: str) -> str:
+    """Find <attachment>filename</attachment> tags in text, upload the files, and strip the tags."""
+    matches = _ATTACHMENT_RE.findall(text)
+    if not matches:
+        return text
+
+    for filename in matches:
+        filepath = ATTACHMENTS_DIR / filename
+        if not filepath.exists():
+            logger.warning(f"Attachment file not found: {filepath}")
+            continue
+        try:
+            client.files_upload_v2(
+                channel=channel,
+                thread_ts=thread_ts,
+                file=str(filepath),
+                filename=filename,
+            )
+            logger.info(f"Uploaded attachment {filepath} to channel={channel}")
+        except Exception:
+            logger.error(f"Failed to upload attachment {filepath}", exc_info=True)
+
+    # Strip attachment tags from the message text
+    return _ATTACHMENT_RE.sub("", text).strip()
 
 
 def create_app() -> App:
@@ -40,14 +108,33 @@ def create_app() -> App:
         model_store.set(channel, arg)
         respond(f"Model switched to *{arg}* for this channel.")
 
+    @app.command(re.compile(r"/yuki-.+"))
+    def handle_skill_command(ack, command, respond, client):
+        """Catch-all: map /yuki-<skill> to Claude's /<skill>."""
+        ack()
+        skill_name = command["command"].removeprefix("/yuki-")
+        channel = command["channel_id"]
+        arg = command.get("text", "").strip()
+        prompt = f"/{skill_name} {arg}" if arg else f"/{skill_name}"
+        model = model_store.get(channel)
+
+        respond(f"Running `/{skill_name}`...")
+        result = run_claude(prompt, model=model)
+
+        response_text = _extract_and_upload_attachments(result.text, client, channel, None)
+        if response_text:
+            respond(response_text)
+
     @app.event("message")
     def handle_message(event, say, client):
-        # Skip bot messages, edits, and other subtypes
-        if event.get("subtype"):
+        # Skip bot messages, edits, and other subtypes (but allow file_share)
+        subtype = event.get("subtype")
+        if subtype and subtype != "file_share":
             return
 
         text = event.get("text", "").strip()
-        if not text:
+        files = event.get("files", [])
+        if not text and not files:
             return
 
         channel = event["channel"]
@@ -55,6 +142,15 @@ def create_app() -> App:
         thread_ts = event.get("thread_ts")
         model = model_store.get(channel)
         logger.info(f"Received message in channel={channel}, channel_type={event.get('channel_type')}, ts={ts}")
+
+        # Download any Slack file attachments and prefix the prompt
+        if files:
+            saved_paths = _download_slack_files(files, slack_bot_token())
+            attachment_prefix = "".join(f"<attachment>{p}</attachment>\n" for p in saved_paths)
+            text = attachment_prefix + text
+
+        if not text.strip():
+            return
 
         # Add hourglass reaction while processing
         try:
@@ -72,15 +168,19 @@ def create_app() -> App:
             result = run_claude(text, session_id=session_id, model=model)
             if result.session_id:
                 store.set(thread_ts, result.session_id)
-            logger.info(f"Posting thread reply to channel={channel}, thread_ts={thread_ts}")
-            say(text=result.text, thread_ts=thread_ts)
+            reply_ts = thread_ts
         else:
             # New top-level message — start new session
             result = run_claude(text, model=model)
             if result.session_id:
                 store.set(ts, result.session_id)
-            logger.info(f"Posting new message to channel={channel}, thread_ts={ts}")
-            say(text=result.text, thread_ts=ts)
+            reply_ts = ts
+
+        # Extract <attachment> tags and upload files, then post the text
+        response_text = _extract_and_upload_attachments(result.text, client, channel, reply_ts)
+        logger.info(f"Posting reply to channel={channel}, thread_ts={reply_ts}")
+        if response_text:
+            say(text=response_text, thread_ts=reply_ts)
 
         _remove_reaction(client, channel, ts)
 
