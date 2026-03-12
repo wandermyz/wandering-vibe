@@ -63,21 +63,50 @@ def _load_cron_tasks() -> list[CronTask]:
     return tasks
 
 
+_CRON_PROMPT_PREFIX = (
+    "You are running as a scheduled cron task. After completing your work, "
+    "decide whether the user needs to be notified.\n"
+    "- If the user should be notified (e.g. a reminder they need to act on, "
+    "an important result, or an error), include <notify> at the very end of "
+    "your response.\n"
+    "- If no notification is needed (e.g. the task is already done, nothing "
+    "changed, or it's a silent check), include <silence> at the very end of "
+    "your response.\n\n"
+    "Now here is your task:\n"
+)
+
+
 def _run_cron_task(task: CronTask, slack_client) -> None:
-    """Execute a single cron task: post to Slack, run Claude, post result."""
+    """Execute a single cron task: run Claude, post to Slack only if <notify>."""
     channel = slack_cron_channel()
 
-    # Post initial message to start a new thread
-    header = f":alarm_clock: *Cron: {task.description or task.name}*\n> Running: `{task.prompt[:200]}`"
+    logger.info(f"Cron task={task.name} starting, running Claude...")
+
+    # Run Claude with the cron prompt, prefixed with notify/silence instructions
+    prefixed_prompt = _CRON_PROMPT_PREFIX + task.prompt
+    result = run_claude(prefixed_prompt)
+
+    # Determine whether to notify the user
+    response_text = result.text or ""
+    should_notify = "<notify>" in response_text
+
+    # Strip the notify/silence tags from the displayed text
+    display_text = response_text.replace("<notify>", "").replace("<silence>", "").strip()
+
+    if not should_notify:
+        logger.info(f"Cron task={task.name} completed silently: {display_text[:200]}")
+        return
+
+    logger.info(f"Cron task={task.name} completed with notification")
+
+    # Post to Slack only when notification is needed
+    header = f":alarm_clock: *Cron: {task.description or task.name}*"
     try:
         response = slack_client.chat_postMessage(channel=channel, text=header)
         thread_ts = response["ts"]
     except Exception:
-        logger.error(f"Failed to post cron start message for task={task.name}", exc_info=True)
+        logger.error(f"Failed to post cron message for task={task.name}", exc_info=True)
         return
-
-    # Run Claude with the cron prompt
-    result = run_claude(task.prompt)
 
     # Store session for potential follow-up in the thread
     if result.session_id:
@@ -85,7 +114,7 @@ def _run_cron_task(task: CronTask, slack_client) -> None:
 
     # Post the result as a thread reply
     try:
-        slack_client.chat_postMessage(channel=channel, text=result.text, thread_ts=thread_ts)
+        slack_client.chat_postMessage(channel=channel, text=display_text, thread_ts=thread_ts)
     except Exception:
         logger.error(f"Failed to post cron result for task={task.name}", exc_info=True)
 
