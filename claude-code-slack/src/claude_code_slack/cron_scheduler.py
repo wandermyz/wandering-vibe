@@ -99,10 +99,9 @@ def _run_cron_task(task: CronTask, slack_client) -> None:
 
     logger.info(f"Cron task={task.name} completed with notification")
 
-    # Post to Slack only when notification is needed
-    header = f":alarm_clock: *Cron: {task.description or task.name}*"
+    # Post Claude's response directly to Slack
     try:
-        response = slack_client.chat_postMessage(channel=channel, text=header)
+        response = slack_client.chat_postMessage(channel=channel, text=display_text)
         thread_ts = response["ts"]
     except Exception:
         logger.error(f"Failed to post cron message for task={task.name}", exc_info=True)
@@ -111,12 +110,6 @@ def _run_cron_task(task: CronTask, slack_client) -> None:
     # Store session for potential follow-up in the thread
     if result.session_id:
         store.set(thread_ts, result.session_id)
-
-    # Post the result as a thread reply
-    try:
-        slack_client.chat_postMessage(channel=channel, text=display_text, thread_ts=thread_ts)
-    except Exception:
-        logger.error(f"Failed to post cron result for task={task.name}", exc_info=True)
 
 
 def _build_task_state(tasks: list[CronTask]) -> tuple[list[tuple[CronTask, croniter]], dict[str, datetime]]:
