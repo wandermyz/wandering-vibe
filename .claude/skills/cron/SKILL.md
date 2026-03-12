@@ -55,10 +55,9 @@ Delete the task's entry from `~/.yuki_workspace/cron.yaml`.
 ## How it works
 
 When a cron fires, the daemon:
-1. Posts a new Slack thread in the configured cron channel with the task name
-2. Runs Claude Code with the prompt
-3. Posts the result as a thread reply
-4. The thread is session-tracked — you can reply to continue the conversation
+1. Runs Claude Code with the prompt
+2. Posts Claude's response directly to the configured cron channel
+3. The message is session-tracked — you can reply in a thread to continue the conversation
 
 ## User request: $ARGUMENTS
 
