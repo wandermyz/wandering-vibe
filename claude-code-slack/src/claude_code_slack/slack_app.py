@@ -2,6 +2,7 @@
 
 import logging
 import re
+import subprocess
 import urllib.request
 
 from slack_bolt import App
@@ -11,6 +12,8 @@ from claude_code_slack.claude_runner import run_claude
 from claude_code_slack.config import (
     ATTACHMENTS_DIR,
     UPLOADS_DIR,
+    CLAUDE_WORKING_DIR,
+    slack_app_dm_channel,
     slack_app_token,
     slack_bot_token,
 )
@@ -204,4 +207,18 @@ def start() -> None:
 
     handler = SocketModeHandler(app, slack_app_token())
     logger.info("Starting claude-code-slack in Socket Mode...")
+
+    # Notify the app DM channel that the daemon has (re)started
+    try:
+        commit = subprocess.run(
+            ["git", "rev-parse", "--short", "HEAD"],
+            cwd=CLAUDE_WORKING_DIR, capture_output=True, text=True,
+        ).stdout.strip() or "unknown"
+        app.client.chat_postMessage(
+            channel=slack_app_dm_channel(),
+            text=f":arrows_counterclockwise: claude-code-slack daemon restarted (commit `{commit}`).",
+        )
+    except Exception:
+        logger.warning("Failed to send restart notification", exc_info=True)
+
     handler.start()

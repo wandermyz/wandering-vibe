@@ -34,6 +34,13 @@ def slack_cron_channel() -> str:
     return channel
 
 
+def slack_app_dm_channel() -> str:
+    channel = os.environ.get("SLACK_APP_DM_CHANNEL", "")
+    if not channel:
+        raise RuntimeError("SLACK_APP_DM_CHANNEL not set")
+    return channel
+
+
 def slack_bot_token() -> str:
     token = os.environ.get("SLACK_BOT_TOKEN", "")
     if not token:
