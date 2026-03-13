@@ -10,7 +10,7 @@ allowed-tools: Read, Write, Edit, Bash
 
 # Cron Task Manager
 
-Cron tasks are defined in `~/.yuki_workspace/cron.yaml` and run automatically
+Cron tasks are defined in `workspace/cron.yaml` and run automatically
 by the claude-code-slack daemon. Changes take effect within 30 seconds — no
 restart needed.
 
@@ -19,12 +19,12 @@ restart needed.
 Read the file and show all tasks with their schedule and description:
 
 ```bash
-cat ~/.yuki_workspace/cron.yaml
+cat workspace/cron.yaml
 ```
 
 ## Add or edit a task
 
-Edit `~/.yuki_workspace/cron.yaml`. Each task has:
+Edit `workspace/cron.yaml`. Each task has:
 
 ```yaml
 tasks:
@@ -50,7 +50,7 @@ Format: `minute hour day-of-month month day-of-week`
 
 ## Remove a task
 
-Delete the task's entry from `~/.yuki_workspace/cron.yaml`.
+Delete the task's entry from `workspace/cron.yaml`.
 
 ## How it works
 
@@ -62,6 +62,6 @@ When a cron fires, the daemon:
 ## User request: $ARGUMENTS
 
 Help the user with the above. If they want to add or modify a task, read the
-current `~/.yuki_workspace/cron.yaml` first, then make the change with Edit or
+current `workspace/cron.yaml` first, then make the change with Edit or
 Write. Show them the final cron expression and confirm what it means in plain
 English.

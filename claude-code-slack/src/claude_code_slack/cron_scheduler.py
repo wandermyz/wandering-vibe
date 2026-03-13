@@ -163,7 +163,7 @@ def _scheduler_loop(slack_client, stop_event: threading.Event) -> None:
 def start_cron_scheduler(slack_client) -> threading.Event:
     """Initialize workspace and start the cron scheduler thread.
 
-    The scheduler reloads ~/.yuki_workspace/cron.yaml every 30 seconds,
+    The scheduler reloads workspace/cron.yaml every 30 seconds,
     so changes take effect without restarting the daemon.
 
     Returns a stop_event that can be set to stop the scheduler.

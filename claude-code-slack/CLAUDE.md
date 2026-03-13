@@ -9,20 +9,20 @@ src/claude_code_slack/
   session_store.py  — thread-safe JSON session store
   claude_runner.py  — subprocess wrapper for claude CLI
   slack_app.py      — slack-bolt Socket Mode handlers
-  cron_scheduler.py — cron task scheduler (reads ~/.yuki_workspace/cron.yaml)
+  cron_scheduler.py — cron task scheduler (reads workspace/cron.yaml)
   daemon.py         — macOS LaunchAgent management
 ```
 
 ## Workspace
 
-The personal workspace directory is `~/.yuki_workspace/`. This is the place to store all personal information such as cron task definitions, personal notes, and any data that should persist across sessions. **Do not include any personal information in the repo itself** — anything in the repo can end up in git.
+The personal workspace directory is `workspace/`. This is the place to store all personal information such as cron task definitions, personal notes, and any data that should persist across sessions. **Do not include any personal information in the repo itself** — anything in the repo can end up in git.
 
 Key workspace files:
-- `~/.yuki_workspace/cron.yaml` — Cron task definitions (see `cron.example.yaml` for format)
+- `workspace/cron.yaml` — Cron task definitions (see `cron.example.yaml` for format)
 
 ## Cron Scheduler
 
-The daemon supports scheduled tasks via `~/.yuki_workspace/cron.yaml`. Each task specifies a cron expression, a description, and a Claude prompt. When the cron fires, it posts a new thread in the configured `SLACK_CRON_CHANNEL` and runs Claude Code with the prompt, posting the result as a thread reply. The thread is session-tracked, so follow-up replies in that thread continue the conversation.
+The daemon supports scheduled tasks via `workspace/cron.yaml`. Each task specifies a cron expression, a description, and a Claude prompt. When the cron fires, it posts a new thread in the configured `SLACK_CRON_CHANNEL` and runs Claude Code with the prompt, posting the result as a thread reply. The thread is session-tracked, so follow-up replies in that thread continue the conversation.
 
 Required env var: `SLACK_CRON_CHANNEL` — the Slack channel ID to post cron results to.
 

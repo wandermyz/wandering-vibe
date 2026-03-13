@@ -18,7 +18,7 @@ ERR_LOG_FILE = DATA_DIR / "daemon.err.log"
 PLIST_LABEL = "com.user.claude-code-slack"
 PLIST_PATH = Path.home() / "Library" / "LaunchAgents" / f"{PLIST_LABEL}.plist"
 
-WORKSPACE_DIR = Path.home() / ".yuki_workspace"
+WORKSPACE_DIR = _project_root.parent / "workspace"
 CRON_FILE = WORKSPACE_DIR / "cron.yaml"
 ATTACHMENTS_DIR = WORKSPACE_DIR / "attachments"
 UPLOADS_DIR = WORKSPACE_DIR / "uploads"
