@@ -1,6 +1,11 @@
 # wandering-vibe
 
-This is a monorepo containing multiple projects.
+A hybrid monorepo and personal assistant workspace. It contains multiple independent projects version-controlled with git, alongside gitignored local folders for personal use:
+
+- **`workspace/`** — Personal tracking (memory, reminder states, cron). Gitignored.
+- **`obsidian/`** — Personal notes (Obsidian vault). Gitignored.
+
+**Personal information should never be committed to git.**
 
 ## Projects
 
