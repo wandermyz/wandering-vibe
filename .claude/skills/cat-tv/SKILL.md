@@ -60,16 +60,16 @@ If visible, take a snapshot and find the "Close" button inside the chat iframe (
 
 ### 6. Enter fullscreen
 
-Press `F11` to make Chrome itself fullscreen (OS-level), then `f` to make the YouTube player fill that space:
+Use AppleScript to make the Chrome window go OS-level fullscreen (requires iTerm to have Accessibility access in System Settings → Privacy & Security → Accessibility), then press `f` to make the YouTube player fill it:
 
 ```bash
-playwright-cli press F11
+osascript -e 'tell application "System Events" to tell process "Google Chrome" to set value of attribute "AXFullScreen" of window 1 to true'
 sleep 1
 playwright-cli eval "document.querySelector('.html5-video-player')?.click()"
 playwright-cli press f
 ```
 
-Verify:
+Verify YouTube fullscreen:
 ```bash
 playwright-cli eval "document.fullscreenElement ? 'youtube-fullscreen: yes' : 'youtube-fullscreen: no'"
 ```
@@ -120,7 +120,7 @@ playwright-cli close
 ## Notes
 
 - Always use `--headed --browser=chrome` — never headless
-- Use `F11` for OS-level Chrome fullscreen, then `f` for YouTube player fullscreen — both are needed
+- Use AppleScript (`AXFullScreen`) for OS-level Chrome fullscreen, then `f` for YouTube player fullscreen — both are needed. Requires iTerm to have Accessibility access granted in System Settings → Privacy & Security → Accessibility
 - The snapshot is the most reliable way to find the Skip button ref — don't guess the selector
 - Live streams (24/7 cat TV channels) usually have pre-roll ads but no mid-roll ads
 - Close the Live Chat sidebar on live streams — it covers part of the video
