@@ -52,6 +52,19 @@ Format: `minute hour day-of-month month day-of-week`
 
 Delete the task's entry from `workspace/cron.yaml`.
 
+## State tracking
+
+For tasks that need to persist state between runs (e.g. "already done this month"), write
+Markdown files (`.md`) into the `workspace/` directory. Example:
+
+```
+workspace/invoice_reminder_state.md
+workspace/concert_check_state.md
+```
+
+Use plain Markdown with a short human-readable summary. Claude can read and overwrite
+these files on each run to detect changes.
+
 ## How it works
 
 When a cron fires, the daemon:
