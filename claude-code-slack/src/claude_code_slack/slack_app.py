@@ -19,6 +19,7 @@ from claude_code_slack.config import (
 )
 from claude_code_slack.cron_scheduler import start_cron_scheduler
 from claude_code_slack.store import VALID_MODELS, ModelStore, SessionStore
+from claude_code_slack.web_server import start_web_server
 
 logger = logging.getLogger(__name__)
 
@@ -169,13 +170,13 @@ def create_app() -> App:
                 return
             result = run_claude(text, session_id=session_id, model=model)
             if result.session_id:
-                store.set(thread_ts, result.session_id)
+                store.set(thread_ts, result.session_id, channel_id=channel)
             reply_ts = thread_ts
         else:
             # New top-level message — start new session
             result = run_claude(text, model=model)
             if result.session_id:
-                store.set(ts, result.session_id)
+                store.set(ts, result.session_id, channel_id=channel)
             reply_ts = ts
 
         # Extract <attachment> tags and upload files, then post the text
@@ -200,6 +201,9 @@ def start() -> None:
     """Start the Slack bot in Socket Mode (blocking)."""
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(levelname)s %(message)s")
     app = create_app()
+
+    # Start web server (background thread)
+    start_web_server()
 
     # Start cron scheduler with the Slack Web API client
     start_cron_scheduler(app.client)

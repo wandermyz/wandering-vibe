@@ -1,3 +1,5 @@
 .playwright-cli/
 workspace/
 obsidian/
+claude-code-slack/web/dist/
+claude-code-slack/web/node_modules/

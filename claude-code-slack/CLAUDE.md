@@ -11,6 +11,8 @@ src/claude_code_slack/
   slack_app.py      — slack-bolt Socket Mode handlers
   cron_scheduler.py — cron task scheduler (reads workspace/cron.yaml)
   daemon.py         — macOS LaunchAgent management
+  web_server.py     — FastAPI HTTP server (agent conductor web UI)
+web/                — React + Vite frontend (pnpm, TypeScript)
 ```
 
 ## Workspace
@@ -32,10 +34,13 @@ Required env var: `SLACK_CRON_CHANNEL` — the Slack channel ID to post cron res
 - `uv run pytest` — run all tests
 - `uv run claude-code-slack --help` — show CLI help
 - `uv run claude-code-slack simulate message "test"` — test without Slack
+- `cd web && pnpm dev` — start frontend dev server (proxies /api to port 2333)
+- `cd web && pnpm build` — build frontend for production (output: web/dist/)
 
 ## Architecture
 
-- **Session tracking**: SQLite database at `workspace/claude-code-slack.db` maps `thread_ts → session_id` and `channel_id → model`
+- **Session tracking**: SQLite database at `workspace/claude-code-slack.db` maps `thread_ts → (session_id, channel_id)` and `channel_id → model`
+- **Web server**: FastAPI on port 2333 (env: `WEB_PORT`), serves React frontend and `/api/sessions` endpoint. Starts in a daemon thread alongside Slack Socket Mode.
 - **Concurrency**: slack-bolt's default thread pool (10 threads); each handler blocks on `subprocess.run`
 - **Claude invocation**: `claude -p --dangerously-skip-permissions --output-format json [-r session_id] "prompt"`
 - **Environment**: Must unset `CLAUDECODE` env var in subprocess to avoid nested session errors
