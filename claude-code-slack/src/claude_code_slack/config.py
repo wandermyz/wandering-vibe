@@ -11,14 +11,13 @@ _project_root = Path(__file__).resolve().parent.parent.parent
 load_dotenv(_project_root / ".env", override=True)
 
 DATA_DIR = Path(os.environ.get("CLAUDE_CODE_SLACK_DATA_DIR", Path.home() / ".claude-code-slack"))
-SESSIONS_FILE = DATA_DIR / "sessions.json"
-MODELS_FILE = DATA_DIR / "models.json"
 LOG_FILE = DATA_DIR / "daemon.log"
 ERR_LOG_FILE = DATA_DIR / "daemon.err.log"
 PLIST_LABEL = "com.user.claude-code-slack"
 PLIST_PATH = Path.home() / "Library" / "LaunchAgents" / f"{PLIST_LABEL}.plist"
 
 WORKSPACE_DIR = _project_root.parent / "workspace"
+DB_FILE = WORKSPACE_DIR / "claude-code-slack.db"
 CRON_FILE = WORKSPACE_DIR / "cron.yaml"
 ATTACHMENTS_DIR = WORKSPACE_DIR / "attachments"
 UPLOADS_DIR = WORKSPACE_DIR / "uploads"

@@ -6,7 +6,7 @@
 src/claude_code_slack/
   cli.py            — argparse entry point (run, daemon, simulate)
   config.py         — env loading, path constants
-  session_store.py  — thread-safe JSON session store
+  store.py          — SQLite-backed session & model stores
   claude_runner.py  — subprocess wrapper for claude CLI
   slack_app.py      — slack-bolt Socket Mode handlers
   cron_scheduler.py — cron task scheduler (reads workspace/cron.yaml)
@@ -18,6 +18,7 @@ src/claude_code_slack/
 The personal workspace directory is `workspace/`. This is the place to store all personal information such as cron task definitions, personal notes, and any data that should persist across sessions. **Do not include any personal information in the repo itself** — anything in the repo can end up in git.
 
 Key workspace files:
+- `workspace/claude-code-slack.db` — SQLite database for session and model tracking
 - `workspace/cron.yaml` — Cron task definitions (see `cron.example.yaml` for format)
 
 ## Cron Scheduler
@@ -34,13 +35,13 @@ Required env var: `SLACK_CRON_CHANNEL` — the Slack channel ID to post cron res
 
 ## Architecture
 
-- **Session tracking**: JSON file at `~/.claude-code-slack/sessions.json` maps `thread_ts → session_id`
+- **Session tracking**: SQLite database at `workspace/claude-code-slack.db` maps `thread_ts → session_id` and `channel_id → model`
 - **Concurrency**: slack-bolt's default thread pool (10 threads); each handler blocks on `subprocess.run`
 - **Claude invocation**: `claude -p --dangerously-skip-permissions --output-format json [-r session_id] "prompt"`
 - **Environment**: Must unset `CLAUDECODE` env var in subprocess to avoid nested session errors
 
 ## Testing
 
-- `test_session_store.py` — unit tests for JSON store (roundtrip, concurrent access)
+- `test_store.py` — unit tests for SQLite store (roundtrip, concurrent access, separate tables)
 - `test_claude_runner.py` — mocked subprocess tests (flag construction, errors, timeouts)
 - `test_cli_simulate.py` — integration tests via simulate commands

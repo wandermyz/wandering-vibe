@@ -51,7 +51,7 @@ def main(argv: list[str] | None = None) -> None:
             sim_parser.print_help()
             sys.exit(1)
         from claude_code_slack.claude_runner import run_claude
-        from claude_code_slack.session_store import SessionStore
+        from claude_code_slack.store import SessionStore
 
         store = SessionStore()
         if args.sim_command == "message":

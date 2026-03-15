@@ -10,7 +10,7 @@ from croniter import croniter
 
 from claude_code_slack.claude_runner import run_claude
 from claude_code_slack.config import CRON_FILE, WORKSPACE_DIR, slack_cron_channel
-from claude_code_slack.session_store import SessionStore
+from claude_code_slack.store import SessionStore
 
 logger = logging.getLogger(__name__)
 

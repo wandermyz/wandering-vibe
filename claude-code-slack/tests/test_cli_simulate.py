@@ -1,6 +1,5 @@
 """Integration tests for CLI simulate commands."""
 
-import json
 from unittest.mock import patch
 
 from claude_code_slack.cli import main
@@ -15,11 +14,11 @@ def _mock_claude_run(prompt, session_id=None, timeout=None):
 
 
 def test_simulate_message(tmp_path, capsys):
-    sessions_path = tmp_path / "sessions.json"
+    db_path = tmp_path / "test.db"
 
     with (
         patch("claude_code_slack.claude_runner.run_claude", side_effect=_mock_claude_run),
-        patch("claude_code_slack.session_store.SESSIONS_FILE", sessions_path),
+        patch("claude_code_slack.store.DB_FILE", db_path),
     ):
         main(["simulate", "message", "What is 2+2?"])
 
@@ -29,11 +28,11 @@ def test_simulate_message(tmp_path, capsys):
 
 
 def test_simulate_message_then_reply(tmp_path, capsys):
-    sessions_path = tmp_path / "sessions.json"
+    db_path = tmp_path / "test.db"
 
     with (
         patch("claude_code_slack.claude_runner.run_claude", side_effect=_mock_claude_run),
-        patch("claude_code_slack.session_store.SESSIONS_FILE", sessions_path),
+        patch("claude_code_slack.store.DB_FILE", db_path),
     ):
         main(["simulate", "message", "Hello"])
 
@@ -46,7 +45,7 @@ def test_simulate_message_then_reply(tmp_path, capsys):
 
     with (
         patch("claude_code_slack.claude_runner.run_claude", side_effect=_mock_claude_run),
-        patch("claude_code_slack.session_store.SESSIONS_FILE", sessions_path),
+        patch("claude_code_slack.store.DB_FILE", db_path),
     ):
         main(["simulate", "reply", thread_ts, "Follow up"])
 
