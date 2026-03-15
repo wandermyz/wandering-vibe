@@ -44,8 +44,7 @@
   padding-left: 13px;
 }
 
-.session-ts {
-  font-family: var(--mono);
+.session-date {
   font-size: 13px;
   color: var(--text-h);
 }

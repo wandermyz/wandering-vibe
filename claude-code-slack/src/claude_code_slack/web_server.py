@@ -3,10 +3,11 @@
 import logging
 import os
 import threading
+import time
 from pathlib import Path
 
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
 from fastapi.staticfiles import StaticFiles
 
 from claude_code_slack.store import SessionStore
@@ -31,20 +32,34 @@ def create_api() -> FastAPI:
     api = FastAPI(title="Agent Conductor")
 
     @api.get("/api/sessions")
-    def list_sessions():
+    def list_sessions(days: int = Query(default=7, ge=1, le=365)):
+        cutoff = time.time() - days * 86400
         sessions = store.list_all()
+        result = []
         for s in sessions:
+            # thread_ts is a Slack timestamp like "1773529834.114199"
+            try:
+                ts_float = float(s["thread_ts"])
+            except (ValueError, TypeError):
+                continue
+            if ts_float < cutoff:
+                continue
             if s["channel_id"]:
                 s["slack_url"] = _slack_thread_url(s["channel_id"], s["thread_ts"])
             else:
                 s["slack_url"] = None
-        return sessions
+            result.append(s)
+        return result
 
     # Serve the React frontend (if built)
     if _WEB_DIST.is_dir():
         api.mount("/", StaticFiles(directory=str(_WEB_DIST), html=True), name="static")
 
     return api
+
+
+# Module-level app for `uvicorn claude_code_slack.web_server:app`
+app = create_api()
 
 
 def start_web_server() -> None:

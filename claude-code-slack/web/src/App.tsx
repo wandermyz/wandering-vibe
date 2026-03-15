@@ -8,6 +8,18 @@ interface Session {
   slack_url: string | null;
 }
 
+function formatTs(ts: string): string {
+  const epoch = parseFloat(ts) * 1000;
+  if (isNaN(epoch)) return ts;
+  const d = new Date(epoch);
+  return d.toLocaleString(undefined, {
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
 function App() {
   const [sessions, setSessions] = useState<Session[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
@@ -32,7 +44,7 @@ function App() {
               className={s.thread_ts === selected ? "active" : ""}
               onClick={() => setSelected(s.thread_ts)}
             >
-              <span className="session-ts">{s.thread_ts}</span>
+              <span className="session-date">{formatTs(s.thread_ts)}</span>
               <span className="session-id">{s.session_id.slice(0, 8)}</span>
             </li>
           ))}
@@ -46,8 +58,8 @@ function App() {
             </button>
             <h2>Session</h2>
             <dl>
-              <dt>Thread TS</dt>
-              <dd>{active.thread_ts}</dd>
+              <dt>Date</dt>
+              <dd>{formatTs(active.thread_ts)}</dd>
               <dt>Session ID</dt>
               <dd>{active.session_id}</dd>
               <dt>Channel ID</dt>
