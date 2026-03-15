@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./App.css";
 
 interface Session {
@@ -21,6 +21,68 @@ function formatTs(ts: string): string {
   });
 }
 
+function EditableTitle({
+  title,
+  onSave,
+}: {
+  title: string;
+  onSave: (newTitle: string) => void;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(title);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setDraft(title);
+    setEditing(false);
+  }, [title]);
+
+  useEffect(() => {
+    if (editing) inputRef.current?.focus();
+  }, [editing]);
+
+  const save = () => {
+    const trimmed = draft.trim();
+    if (trimmed && trimmed !== title) {
+      onSave(trimmed);
+    }
+    setEditing(false);
+  };
+
+  if (editing) {
+    return (
+      <input
+        ref={inputRef}
+        className="title-input"
+        value={draft}
+        onChange={(e) => setDraft(e.target.value)}
+        onBlur={save}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") save();
+          if (e.key === "Escape") {
+            setDraft(title);
+            setEditing(false);
+          }
+        }}
+      />
+    );
+  }
+
+  return (
+    <div className="title-row">
+      <h2>{title}</h2>
+      <button
+        className="edit-btn"
+        onClick={() => setEditing(true)}
+        title="Rename"
+        aria-label="Rename"
+      >
+        &#9998;
+      </button>
+    </div>
+  );
+}
+
 function App() {
   const [sessions, setSessions] = useState<Session[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
@@ -33,6 +95,23 @@ function App() {
   }, []);
 
   const active = sessions.find((s) => s.thread_ts === selected);
+
+  const updateTitle = (threadTs: string, newTitle: string) => {
+    fetch(`/api/sessions/${threadTs}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ title: newTitle }),
+    })
+      .then((r) => {
+        if (!r.ok) throw new Error("Failed to update title");
+        setSessions((prev) =>
+          prev.map((s) =>
+            s.thread_ts === threadTs ? { ...s, title: newTitle } : s
+          )
+        );
+      })
+      .catch(console.error);
+  };
 
   return (
     <div className={`app ${selected ? "detail-open" : ""}`}>
@@ -59,7 +138,10 @@ function App() {
             <button className="back-btn" onClick={() => setSelected(null)}>
               &larr; Back
             </button>
-            <h2>{active.title || "Untitled"}</h2>
+            <EditableTitle
+              title={active.title || "Untitled"}
+              onSave={(t) => updateTitle(active.thread_ts, t)}
+            />
             <dl>
               <dt>Date</dt>
               <dd>{formatTs(active.thread_ts)}</dd>

@@ -7,8 +7,9 @@ import time
 from pathlib import Path
 
 import uvicorn
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
 
 from claude_code_slack.store import SessionStore
 
@@ -51,6 +52,16 @@ def create_api() -> FastAPI:
             result.append(s)
         result.sort(key=lambda s: s["thread_ts"], reverse=True)
         return result
+
+    class TitleUpdate(BaseModel):
+        title: str
+
+    @api.patch("/api/sessions/{thread_ts}")
+    def update_session_title(thread_ts: str, body: TitleUpdate):
+        if not store.get(thread_ts):
+            raise HTTPException(status_code=404, detail="Session not found")
+        store.set_title(thread_ts, body.title)
+        return {"ok": True, "title": body.title}
 
     # Serve the React frontend (if built)
     if _WEB_DIST.is_dir():
