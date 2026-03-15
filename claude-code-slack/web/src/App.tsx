@@ -6,6 +6,7 @@ interface Session {
   session_id: string;
   channel_id: string | null;
   slack_url: string | null;
+  title: string | null;
 }
 
 function formatTs(ts: string): string {
@@ -36,7 +37,7 @@ function App() {
   return (
     <div className={`app ${selected ? "detail-open" : ""}`}>
       <aside className="sidebar">
-        <h2>Sessions</h2>
+        <h2>Recent Conversations</h2>
         <ul>
           {sessions.map((s) => (
             <li
@@ -44,8 +45,10 @@ function App() {
               className={s.thread_ts === selected ? "active" : ""}
               onClick={() => setSelected(s.thread_ts)}
             >
+              <span className="session-title">
+                {s.title || s.session_id.slice(0, 8)}
+              </span>
               <span className="session-date">{formatTs(s.thread_ts)}</span>
-              <span className="session-id">{s.session_id.slice(0, 8)}</span>
             </li>
           ))}
         </ul>
@@ -56,7 +59,7 @@ function App() {
             <button className="back-btn" onClick={() => setSelected(null)}>
               &larr; Back
             </button>
-            <h2>Session</h2>
+            <h2>{active.title || "Untitled"}</h2>
             <dl>
               <dt>Date</dt>
               <dd>{formatTs(active.thread_ts)}</dd>
@@ -77,7 +80,7 @@ function App() {
             </dl>
           </div>
         ) : (
-          <p className="placeholder">Select a session from the sidebar</p>
+          <p className="placeholder">Select a conversation from the sidebar</p>
         )}
       </main>
     </div>

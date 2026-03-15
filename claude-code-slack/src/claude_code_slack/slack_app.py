@@ -111,6 +111,76 @@ def create_app() -> App:
         model_store.set(channel, arg)
         respond(f"Model switched to *{arg}* for this channel.")
 
+    @app.command("/yuki-title")
+    def handle_title_command(ack, command, respond):
+        """Rename the title of a conversation thread."""
+        ack()
+        new_title = command.get("text", "").strip()
+        if not new_title:
+            respond("Usage: `/yuki-title <new title>` (use in a thread)")
+            return
+
+        channel = command["channel_id"]
+        # Slash commands don't have thread_ts directly; the command is
+        # posted in a channel context.  We need to check if the command
+        # was invoked from a thread.  Slack doesn't send thread_ts for
+        # slash commands, so we look at the channel's most recent thread.
+        # However, slash commands don't carry thread context reliably.
+        # Instead, we allow setting title by thread_ts as an argument:
+        #   /yuki-title <thread_ts> <title>  OR  /yuki-title <title>
+        # When just a title is given, we'll set it on the most recent
+        # session in this channel.
+        parts = new_title.split(None, 1)
+        # Check if first part looks like a Slack timestamp (digits.digits)
+        if len(parts) == 2 and re.match(r"^\d+\.\d+$", parts[0]):
+            thread_ts = parts[0]
+            title = parts[1]
+        else:
+            # Set on most recent session in this channel
+            thread_ts = None
+            title = new_title
+
+        if thread_ts:
+            if store.set_title(thread_ts, title):
+                respond(f"Title set to: *{title}*")
+            else:
+                respond(f"No session found for thread `{thread_ts}`.")
+        else:
+            # Find most recent session in this channel
+            sessions = store.list_all()
+            for s in sessions:
+                if s.get("channel_id") == channel:
+                    if store.set_title(s["thread_ts"], title):
+                        respond(f"Title set to: *{title}*")
+                        return
+            respond("No sessions found in this channel.")
+
+    @app.command("/yuki-usage")
+    def handle_usage_command(ack, command, respond):
+        """Run `claude --stats` to show current usage and limits."""
+        ack()
+        respond("Fetching usage stats...")
+        try:
+            proc = subprocess.run(
+                ["claude", "--stats"],
+                capture_output=True,
+                text=True,
+                timeout=30,
+                cwd=CLAUDE_WORKING_DIR,
+            )
+            output = (proc.stdout or "").strip()
+            err = (proc.stderr or "").strip()
+            if proc.returncode != 0:
+                respond(f"```\n{err or output or 'claude --stats failed'}\n```")
+            elif output:
+                respond(f"```\n{output}\n```")
+            else:
+                respond("No output from `claude --stats`.")
+        except subprocess.TimeoutExpired:
+            respond("Timed out running `claude --stats`.")
+        except FileNotFoundError:
+            respond("`claude` CLI not found.")
+
     @app.command(re.compile(r"/yuki-.+"))
     def handle_skill_command(ack, command, respond, client):
         """Catch-all: map /yuki-<skill> to Claude's /<skill>."""
@@ -176,7 +246,9 @@ def create_app() -> App:
             # New top-level message — start new session
             result = run_claude(text, model=model)
             if result.session_id:
-                store.set(ts, result.session_id, channel_id=channel)
+                # Use the original message text (without attachment prefixes) as title
+                raw_text = event.get("text", "").strip()
+                store.set(ts, result.session_id, channel_id=channel, title=raw_text)
             reply_ts = ts
 
         # Extract <attachment> tags and upload files, then post the text

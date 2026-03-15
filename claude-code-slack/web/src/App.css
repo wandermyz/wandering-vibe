@@ -44,13 +44,15 @@
   padding-left: 13px;
 }
 
-.session-date {
+.session-title {
   font-size: 13px;
   color: var(--text-h);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.session-id {
-  font-family: var(--mono);
+.session-date {
   font-size: 12px;
   color: var(--text);
 }
