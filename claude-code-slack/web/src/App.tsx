@@ -22,7 +22,7 @@ function App() {
   const active = sessions.find((s) => s.thread_ts === selected);
 
   return (
-    <div className="app">
+    <div className={`app ${selected ? "detail-open" : ""}`}>
       <aside className="sidebar">
         <h2>Sessions</h2>
         <ul>
@@ -41,6 +41,9 @@ function App() {
       <main className="content">
         {active ? (
           <div className="session-detail">
+            <button className="back-btn" onClick={() => setSelected(null)}>
+              &larr; Back
+            </button>
             <h2>Session</h2>
             <dl>
               <dt>Thread TS</dt>

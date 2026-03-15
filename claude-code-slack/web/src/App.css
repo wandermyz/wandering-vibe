@@ -3,6 +3,8 @@
   height: 100vh;
 }
 
+/* ---- Sidebar ---- */
+
 .sidebar {
   width: 300px;
   min-width: 300px;
@@ -54,10 +56,13 @@
   color: var(--text);
 }
 
+/* ---- Main content ---- */
+
 .content {
   flex: 1;
   padding: 24px 32px;
   overflow-y: auto;
+  min-width: 0;
 }
 
 .session-detail h2 {
@@ -89,4 +94,66 @@
 .placeholder {
   color: var(--text);
   font-size: 16px;
+}
+
+.back-btn {
+  display: none;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 12px;
+  color: var(--text-h);
+  cursor: pointer;
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+/* ---- Responsive: mobile (<= 640px) ---- */
+
+@media (max-width: 640px) {
+  .app {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    min-width: unset;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* When a session is selected, hide the sidebar and show detail full-width */
+  .app.detail-open .sidebar {
+    display: none;
+  }
+
+  .app.detail-open .content {
+    display: block;
+  }
+
+  /* When no session is selected, show sidebar full-height and hide the placeholder */
+  .app:not(.detail-open) .sidebar {
+    flex: 1;
+  }
+
+  .app:not(.detail-open) .content {
+    display: none;
+  }
+
+  .back-btn {
+    display: inline-block;
+  }
+
+  .content {
+    padding: 16px;
+  }
+
+  .session-detail dl {
+    grid-template-columns: 1fr;
+    gap: 4px 0;
+  }
+
+  .session-detail dt {
+    margin-top: 8px;
+  }
 }
