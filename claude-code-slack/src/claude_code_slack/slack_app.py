@@ -115,45 +115,7 @@ def create_app() -> App:
     def handle_title_command(ack, command, respond):
         """Rename the title of a conversation thread."""
         ack()
-        new_title = command.get("text", "").strip()
-        if not new_title:
-            respond("Usage: `/yuki-title <new title>` (use in a thread)")
-            return
-
-        channel = command["channel_id"]
-        # Slash commands don't have thread_ts directly; the command is
-        # posted in a channel context.  We need to check if the command
-        # was invoked from a thread.  Slack doesn't send thread_ts for
-        # slash commands, so we look at the channel's most recent thread.
-        # However, slash commands don't carry thread context reliably.
-        # Instead, we allow setting title by thread_ts as an argument:
-        #   /yuki-title <thread_ts> <title>  OR  /yuki-title <title>
-        # When just a title is given, we'll set it on the most recent
-        # session in this channel.
-        parts = new_title.split(None, 1)
-        # Check if first part looks like a Slack timestamp (digits.digits)
-        if len(parts) == 2 and re.match(r"^\d+\.\d+$", parts[0]):
-            thread_ts = parts[0]
-            title = parts[1]
-        else:
-            # Set on most recent session in this channel
-            thread_ts = None
-            title = new_title
-
-        if thread_ts:
-            if store.set_title(thread_ts, title):
-                respond(f"Title set to: *{title}*")
-            else:
-                respond(f"No session found for thread `{thread_ts}`.")
-        else:
-            # Find most recent session in this channel
-            sessions = store.list_all()
-            for s in sessions:
-                if s.get("channel_id") == channel:
-                    if store.set_title(s["thread_ts"], title):
-                        respond(f"Title set to: *{title}*")
-                        return
-            respond("No sessions found in this channel.")
+        respond("Reply with `!title <new title>` in a thread to rename it.")
 
     @app.command("/yuki-usage")
     def handle_usage_command(ack, command, respond):
@@ -215,6 +177,16 @@ def create_app() -> App:
         thread_ts = event.get("thread_ts")
         model = model_store.get(channel)
         logger.info(f"Received message in channel={channel}, channel_type={event.get('channel_type')}, ts={ts}")
+
+        # Handle !title command in threads
+        if thread_ts and text.startswith("!title "):
+            new_title = text[len("!title "):].strip()
+            if new_title and store.get(thread_ts):
+                store.set_title(thread_ts, new_title)
+                say(text=f"Title set to: *{new_title}*", thread_ts=thread_ts)
+            else:
+                say(text="No session found for this thread.", thread_ts=thread_ts)
+            return
 
         # Download any Slack file attachments and prefix the prompt
         if files:
