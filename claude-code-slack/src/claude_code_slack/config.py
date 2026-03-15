@@ -5,10 +5,12 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-# Load .env from the project root (next to pyproject.toml), overriding any
-# existing env vars so the project .env is always the source of truth.
+# Load .env from workspace/ (gitignored, contains secrets).
+# Falls back to project root .env for backwards compatibility.
 _project_root = Path(__file__).resolve().parent.parent.parent
-load_dotenv(_project_root / ".env", override=True)
+_workspace_env = _project_root.parent / "workspace" / ".env"
+_project_env = _project_root / ".env"
+load_dotenv(_workspace_env if _workspace_env.exists() else _project_env, override=True)
 
 DATA_DIR = Path(os.environ.get("CLAUDE_CODE_SLACK_DATA_DIR", Path.home() / ".claude-code-slack"))
 LOG_FILE = DATA_DIR / "daemon.log"
@@ -23,7 +25,7 @@ ATTACHMENTS_DIR = WORKSPACE_DIR / "attachments"
 UPLOADS_DIR = WORKSPACE_DIR / "uploads"
 
 CLAUDE_TIMEOUT = int(os.environ.get("CLAUDE_TIMEOUT", "300"))
-CLAUDE_WORKING_DIR = os.environ.get("CLAUDE_WORKING_DIR", str(Path.home() / "Projects" / "wandering-vibe"))
+CLAUDE_WORKING_DIR = os.path.expanduser(os.environ.get("CLAUDE_WORKING_DIR", "~/Projects/wandering-vibe"))
 
 
 def slack_cron_channel() -> str:

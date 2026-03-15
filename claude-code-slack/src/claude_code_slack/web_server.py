@@ -49,6 +49,7 @@ def create_api() -> FastAPI:
             else:
                 s["slack_url"] = None
             result.append(s)
+        result.sort(key=lambda s: s["thread_ts"], reverse=True)
         return result
 
     # Serve the React frontend (if built)
