@@ -18,8 +18,7 @@ from claude_code_slack.config import (
     slack_bot_token,
 )
 from claude_code_slack.cron_scheduler import start_cron_scheduler
-from claude_code_slack.model_store import VALID_MODELS, ModelStore
-from claude_code_slack.session_store import SessionStore
+from claude_code_slack.store import VALID_MODELS, ModelStore, SessionStore
 
 logger = logging.getLogger(__name__)
 
