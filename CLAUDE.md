@@ -14,6 +14,8 @@ A hybrid monorepo and personal assistant workspace. It contains multiple indepen
 - **[openclaw-control](openclaw-control/)** — Control and configuration for the local OpenClaw gateway. See [openclaw-control/CLAUDE.md](openclaw-control/CLAUDE.md) for project-specific development reference.
 - **[wandering-md](wandering-md/)** — Minimal iOS app for viewing Markdown files with GitHub-style rendering. See [wandering-md/CLAUDE.md](wandering-md/CLAUDE.md) for project-specific development reference.
 
+Each project has its own `docs/` folder for documentation. Project plans should always be saved under `<project_dir>/docs/plans/<YYYY-MM-DD>-<plan-title>.md`.
+
 ## Memory System
 
 Project memory is stored as plain Markdown files in `workspace/memory/`. Only what is written to files persists across sessions.
