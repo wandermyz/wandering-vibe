@@ -96,6 +96,14 @@ class SessionStore:
                     con.execute(
                         "ALTER TABLE sessions ADD COLUMN title TEXT"
                     )
+                if "session_type" not in cols:
+                    con.execute(
+                        "ALTER TABLE sessions ADD COLUMN session_type TEXT DEFAULT 'slack'"
+                    )
+                if "project" not in cols:
+                    con.execute(
+                        "ALTER TABLE sessions ADD COLUMN project TEXT"
+                    )
                 con.commit()
             finally:
                 con.close()
@@ -113,7 +121,8 @@ class SessionStore:
                 con.close()
 
     def set(self, key: str, value: str, channel_id: str | None = None,
-            title: str | None = None) -> None:
+            title: str | None = None, session_type: str = "slack",
+            project: str | None = None) -> None:
         """Store session_id (and optionally channel_id/title) for a thread_ts."""
         if title and len(title) > self.MAX_TITLE_LEN:
             title = title[:self.MAX_TITLE_LEN - 1] + "\u2026"
@@ -121,9 +130,10 @@ class SessionStore:
             con = self._connect()
             try:
                 con.execute(
-                    "INSERT OR REPLACE INTO sessions (key, value, channel_id, title) "
-                    "VALUES (?, ?, ?, ?)",
-                    (key, value, channel_id, title),
+                    "INSERT OR REPLACE INTO sessions "
+                    "(key, value, channel_id, title, session_type, project) "
+                    "VALUES (?, ?, ?, ?, ?, ?)",
+                    (key, value, channel_id, title, session_type, project),
                 )
                 con.commit()
             finally:
@@ -146,12 +156,13 @@ class SessionStore:
                 con.close()
 
     def list_all(self) -> list[dict]:
-        """Return all sessions as dicts with thread_ts, session_id, channel_id, title."""
+        """Return all sessions as dicts."""
         with self._lock:
             con = self._connect()
             try:
                 rows = con.execute(
-                    "SELECT key, value, channel_id, title FROM sessions ORDER BY key DESC"
+                    "SELECT key, value, channel_id, title, session_type, project "
+                    "FROM sessions ORDER BY key DESC"
                 ).fetchall()
                 return [
                     {
@@ -159,9 +170,30 @@ class SessionStore:
                         "session_id": row[1],
                         "channel_id": row[2],
                         "title": row[3],
+                        "session_type": row[4] or "slack",
+                        "project": row[5],
                     }
                     for row in rows
                 ]
+            finally:
+                con.close()
+
+    def create_zellij_session(self, zellij_session_name: str, title: str,
+                              project: str) -> str:
+        """Create a Zellij session entry. Returns the key."""
+        key = f"zellij:{zellij_session_name}"
+        self.set(key, zellij_session_name, session_type="zellij",
+                 project=project, title=title)
+        return key
+
+    def delete_session(self, key: str) -> bool:
+        """Delete a session by key. Returns True if found."""
+        with self._lock:
+            con = self._connect()
+            try:
+                cur = con.execute("DELETE FROM sessions WHERE key = ?", (key,))
+                con.commit()
+                return cur.rowcount > 0
             finally:
                 con.close()
 

@@ -7,6 +7,10 @@ export default defineConfig({
     allowedHosts: true,
     proxy: {
       '/api': 'http://localhost:2333',
+      '/ws': {
+        target: 'ws://localhost:2333',
+        ws: true,
+      },
     },
   },
 })
