@@ -165,12 +165,62 @@ class SessionStore:
             finally:
                 con.close()
 
+    def stats(self) -> dict:
+        """Return usage statistics from the sessions table."""
+        import time
+
+        now = time.time()
+        day7 = now - 7 * 86400
+        day30 = now - 30 * 86400
+
+        with self._lock:
+            con = self._connect()
+            try:
+                total = con.execute(
+                    "SELECT COUNT(*) FROM sessions"
+                ).fetchone()[0]
+                # thread_ts is a Slack timestamp (epoch.seq), so we can compare directly
+                last_7 = con.execute(
+                    "SELECT COUNT(*) FROM sessions WHERE CAST(key AS REAL) >= ?",
+                    (day7,),
+                ).fetchone()[0]
+                last_30 = con.execute(
+                    "SELECT COUNT(*) FROM sessions WHERE CAST(key AS REAL) >= ?",
+                    (day30,),
+                ).fetchone()[0]
+                # Per-channel breakdown (last 30 days)
+                per_channel = con.execute(
+                    "SELECT channel_id, COUNT(*) FROM sessions "
+                    "WHERE CAST(key AS REAL) >= ? AND channel_id IS NOT NULL "
+                    "GROUP BY channel_id ORDER BY COUNT(*) DESC",
+                    (day30,),
+                ).fetchall()
+                return {
+                    "total": total,
+                    "last_7_days": last_7,
+                    "last_30_days": last_30,
+                    "per_channel_30d": per_channel,
+                }
+            finally:
+                con.close()
+
 
 class ModelStore(_SqliteKVStore):
     """Maps Slack channel_id -> model alias."""
 
     def __init__(self, db_path: Path | None = None):
         super().__init__("models", db_path)
+
+    def list_all(self) -> list[tuple[str, str]]:
+        """Return all (channel_id, model) pairs."""
+        with self._lock:
+            con = self._connect()
+            try:
+                return con.execute(
+                    f"SELECT key, value FROM {self._table}"
+                ).fetchall()
+            finally:
+                con.close()
 
 
 VALID_MODELS = {"sonnet", "opus", "haiku"}

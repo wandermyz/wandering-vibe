@@ -118,30 +118,45 @@ def create_app() -> App:
         respond("Reply with `!title <new title>` in a thread to rename it.")
 
     @app.command("/yuki-usage")
-    def handle_usage_command(ack, command, respond):
-        """Run `claude --stats` to show current usage and limits."""
+    def handle_usage_command(ack, command, respond, client):
+        """Show bot usage statistics."""
         ack()
-        respond("Fetching usage stats...")
+
+        lines = ["*Yuki Usage Stats*\n"]
+
+        # Session stats from our database
+        stats = store.stats()
+        lines.append(f"*Conversations:*  {stats['total']} total  |  {stats['last_30_days']} last 30d  |  {stats['last_7_days']} last 7d")
+
+        # Per-channel breakdown (last 30 days)
+        if stats["per_channel_30d"]:
+            channel_parts = []
+            for ch_id, count in stats["per_channel_30d"][:5]:
+                channel_parts.append(f"<#{ch_id}>: {count}")
+            lines.append(f"*By channel (30d):*  {' | '.join(channel_parts)}")
+
+        # Model settings
+        model_rows = model_store.list_all()
+        if model_rows:
+            model_parts = [f"<#{k}>: {v}" for k, v in model_rows[:5]]
+            lines.append(f"*Model settings:*  {' | '.join(model_parts)}")
+
+        # Claude CLI version
         try:
             proc = subprocess.run(
-                ["claude", "--stats"],
+                ["claude", "--version"],
                 capture_output=True,
                 text=True,
-                timeout=30,
+                timeout=10,
                 cwd=CLAUDE_WORKING_DIR,
             )
-            output = (proc.stdout or "").strip()
-            err = (proc.stderr or "").strip()
-            if proc.returncode != 0:
-                respond(f"```\n{err or output or 'claude --stats failed'}\n```")
-            elif output:
-                respond(f"```\n{output}\n```")
-            else:
-                respond("No output from `claude --stats`.")
-        except subprocess.TimeoutExpired:
-            respond("Timed out running `claude --stats`.")
-        except FileNotFoundError:
-            respond("`claude` CLI not found.")
+            version = (proc.stdout or "").strip()
+            if version:
+                lines.append(f"*Claude CLI:*  {version}")
+        except Exception:
+            pass
+
+        respond("\n".join(lines))
 
     @app.command(re.compile(r"/yuki-.+"))
     def handle_skill_command(ack, command, respond, client):
