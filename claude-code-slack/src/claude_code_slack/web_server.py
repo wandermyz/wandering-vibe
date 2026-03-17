@@ -220,26 +220,30 @@ def create_api() -> FastAPI:
                 msg = await websocket.receive()
                 if msg.get("type") == "websocket.disconnect":
                     break
-                if "bytes" in msg:
-                    os.write(master_fd, msg["bytes"])
-                elif "text" in msg:
-                    # Handle resize messages or text input
-                    try:
-                        parsed = json.loads(msg["text"])
-                        if parsed.get("type") == "resize":
-                            cols = parsed.get("cols", 80)
-                            rows = parsed.get("rows", 24)
-                            winsize = struct.pack("HHHH", rows, cols, 0, 0)
-                            fcntl.ioctl(master_fd, termios.TIOCSWINSZ, winsize)
-                            # Explicitly signal the process group
-                            try:
-                                os.killpg(os.getpgid(proc.pid), signal.SIGWINCH)
-                            except (OSError, ProcessLookupError):
-                                pass
-                            continue
-                    except (json.JSONDecodeError, ValueError):
-                        pass
-                    os.write(master_fd, msg["text"].encode())
+                try:
+                    if "bytes" in msg:
+                        os.write(master_fd, msg["bytes"])
+                    elif "text" in msg:
+                        # Handle resize messages or text input
+                        try:
+                            parsed = json.loads(msg["text"])
+                            if parsed.get("type") == "resize":
+                                cols = parsed.get("cols", 80)
+                                rows = parsed.get("rows", 24)
+                                winsize = struct.pack("HHHH", rows, cols, 0, 0)
+                                fcntl.ioctl(master_fd, termios.TIOCSWINSZ, winsize)
+                                # Explicitly signal the process group
+                                try:
+                                    os.killpg(os.getpgid(proc.pid), signal.SIGWINCH)
+                                except (OSError, ProcessLookupError):
+                                    pass
+                                continue
+                        except (json.JSONDecodeError, ValueError):
+                            pass
+                        os.write(master_fd, msg["text"].encode())
+                except OSError:
+                    logger.debug("PTY write failed, closing WebSocket", exc_info=True)
+                    break
         except WebSocketDisconnect:
             pass
         finally:

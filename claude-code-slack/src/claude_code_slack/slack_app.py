@@ -1,8 +1,11 @@
 """Slack Bot Socket Mode handlers."""
 
 import logging
+import os
 import re
 import subprocess
+import threading
+import time
 import urllib.request
 
 from slack_bolt import App
@@ -256,6 +259,27 @@ def _remove_reaction(client, channel: str, ts: str) -> None:
         logger.debug("Could not remove reaction", exc_info=True)
 
 
+_MAX_CONSECUTIVE_FAILURES = 10
+_FAILURE_WINDOW_SECONDS = 120
+_failures: list[float] = []
+
+
+def _connection_error_listener(error: Exception) -> None:
+    """Track BrokenPipeErrors and exit if stuck in a reconnect loop."""
+    if isinstance(error, BrokenPipeError):
+        now = time.monotonic()
+        _failures.append(now)
+        cutoff = now - _FAILURE_WINDOW_SECONDS
+        while _failures and _failures[0] < cutoff:
+            _failures.pop(0)
+        if len(_failures) >= _MAX_CONSECUTIVE_FAILURES:
+            logger.error(
+                f"Connection watchdog: {len(_failures)} BrokenPipeErrors in "
+                f"{_FAILURE_WINDOW_SECONDS}s — exiting for restart"
+            )
+            os._exit(1)
+
+
 def start() -> None:
     """Start the Slack bot in Socket Mode (blocking)."""
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(levelname)s %(message)s")
@@ -268,6 +292,8 @@ def start() -> None:
     start_cron_scheduler(app.client)
 
     handler = SocketModeHandler(app, slack_app_token())
+    handler.client.on_error_listeners.append(_connection_error_listener)
+    logger.info("Connection watchdog installed")
     logger.info("Starting claude-code-slack in Socket Mode...")
 
     # Notify the app DM channel that the daemon has (re)started
