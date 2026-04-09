@@ -1,0 +1,508 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		OD0000000000000000000001 /* ODNotesApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = OD1000000000000000000001 /* ODNotesApp.swift */; };
+		OD0000000000000000000002 /* FileItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = OD1000000000000000000002 /* FileItem.swift */; };
+		OD0000000000000000000003 /* NotesStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = OD1000000000000000000003 /* NotesStore.swift */; };
+		OD0000000000000000000004 /* BookmarkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = OD1000000000000000000004 /* BookmarkManager.swift */; };
+		OD0000000000000000000005 /* FolderBrowserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = OD1000000000000000000005 /* FolderBrowserView.swift */; };
+		OD0000000000000000000006 /* NoteDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = OD1000000000000000000006 /* NoteDetailView.swift */; };
+		OD0000000000000000000007 /* FolderPickerButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = OD1000000000000000000007 /* FolderPickerButton.swift */; };
+		OD0000000000000000000008 /* MarkdownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = OD1000000000000000000008 /* MarkdownView.swift */; };
+		OD0000000000000000000009 /* MarkdownRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = OD1000000000000000000009 /* MarkdownRenderer.swift */; };
+		OD000000000000000000000A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = OD100000000000000000000A /* Assets.xcassets */; };
+		OD000000000000000000000B /* MarkdownRendererTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = OD100000000000000000000B /* MarkdownRendererTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		OD2000000000000000000001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = OD3000000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = OD4000000000000000000001;
+			remoteInfo = "od-notes";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		OD1000000000000000000001 /* ODNotesApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ODNotesApp.swift; sourceTree = "<group>"; };
+		OD1000000000000000000002 /* FileItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileItem.swift; sourceTree = "<group>"; };
+		OD1000000000000000000003 /* NotesStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotesStore.swift; sourceTree = "<group>"; };
+		OD1000000000000000000004 /* BookmarkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookmarkManager.swift; sourceTree = "<group>"; };
+		OD1000000000000000000005 /* FolderBrowserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderBrowserView.swift; sourceTree = "<group>"; };
+		OD1000000000000000000006 /* NoteDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteDetailView.swift; sourceTree = "<group>"; };
+		OD1000000000000000000007 /* FolderPickerButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderPickerButton.swift; sourceTree = "<group>"; };
+		OD1000000000000000000008 /* MarkdownView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownView.swift; sourceTree = "<group>"; };
+		OD1000000000000000000009 /* MarkdownRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownRenderer.swift; sourceTree = "<group>"; };
+		OD100000000000000000000A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		OD100000000000000000000B /* MarkdownRendererTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownRendererTests.swift; sourceTree = "<group>"; };
+		OD100000000000000000000C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		OD100000000000000000000D /* od-notes.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "od-notes.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		OD100000000000000000000E /* od-notesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "od-notesTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		OD5000000000000000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		OD5000000000000000000002 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		OD6000000000000000000001 = {
+			isa = PBXGroup;
+			children = (
+				OD6000000000000000000002 /* od-notes */,
+				OD6000000000000000000003 /* od-notesTests */,
+				OD6000000000000000000004 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		OD6000000000000000000002 /* od-notes */ = {
+			isa = PBXGroup;
+			children = (
+				OD1000000000000000000001 /* ODNotesApp.swift */,
+				OD6000000000000000000005 /* Models */,
+				OD6000000000000000000006 /* Store */,
+				OD6000000000000000000007 /* Views */,
+				OD6000000000000000000008 /* Rendering */,
+				OD100000000000000000000C /* Info.plist */,
+				OD100000000000000000000A /* Assets.xcassets */,
+			);
+			path = "od-notes";
+			sourceTree = "<group>";
+		};
+		OD6000000000000000000003 /* od-notesTests */ = {
+			isa = PBXGroup;
+			children = (
+				OD100000000000000000000B /* MarkdownRendererTests.swift */,
+			);
+			path = "od-notesTests";
+			sourceTree = "<group>";
+		};
+		OD6000000000000000000004 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				OD100000000000000000000D /* od-notes.app */,
+				OD100000000000000000000E /* od-notesTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		OD6000000000000000000005 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				OD1000000000000000000002 /* FileItem.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		OD6000000000000000000006 /* Store */ = {
+			isa = PBXGroup;
+			children = (
+				OD1000000000000000000003 /* NotesStore.swift */,
+				OD1000000000000000000004 /* BookmarkManager.swift */,
+			);
+			path = Store;
+			sourceTree = "<group>";
+		};
+		OD6000000000000000000007 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				OD1000000000000000000005 /* FolderBrowserView.swift */,
+				OD1000000000000000000006 /* NoteDetailView.swift */,
+				OD1000000000000000000007 /* FolderPickerButton.swift */,
+				OD1000000000000000000008 /* MarkdownView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		OD6000000000000000000008 /* Rendering */ = {
+			isa = PBXGroup;
+			children = (
+				OD1000000000000000000009 /* MarkdownRenderer.swift */,
+			);
+			path = Rendering;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		OD4000000000000000000001 /* od-notes */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = OD7000000000000000000002 /* Build configuration list for PBXNativeTarget "od-notes" */;
+			buildPhases = (
+				OD8000000000000000000001 /* Sources */,
+				OD5000000000000000000001 /* Frameworks */,
+				OD9000000000000000000001 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "od-notes";
+			productName = "od-notes";
+			productReference = OD100000000000000000000D /* od-notes.app */;
+			productType = "com.apple.product-type.application";
+		};
+		OD4000000000000000000002 /* od-notesTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = OD7000000000000000000003 /* Build configuration list for PBXNativeTarget "od-notesTests" */;
+			buildPhases = (
+				OD8000000000000000000002 /* Sources */,
+				OD5000000000000000000002 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				ODA000000000000000000001 /* PBXTargetDependency */,
+			);
+			name = "od-notesTests";
+			productName = "od-notesTests";
+			productReference = OD100000000000000000000E /* od-notesTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		OD3000000000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					OD4000000000000000000001 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+					OD4000000000000000000002 = {
+						CreatedOnToolsVersion = 15.0;
+						TestTargetID = OD4000000000000000000001;
+					};
+				};
+			};
+			buildConfigurationList = OD7000000000000000000001 /* Build configuration list for PBXProject "od-notes" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = OD6000000000000000000001;
+			productRefGroup = OD6000000000000000000004 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				OD4000000000000000000001 /* od-notes */,
+				OD4000000000000000000002 /* od-notesTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		OD9000000000000000000001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				OD000000000000000000000A /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		OD8000000000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				OD0000000000000000000001 /* ODNotesApp.swift in Sources */,
+				OD0000000000000000000002 /* FileItem.swift in Sources */,
+				OD0000000000000000000003 /* NotesStore.swift in Sources */,
+				OD0000000000000000000004 /* BookmarkManager.swift in Sources */,
+				OD0000000000000000000005 /* FolderBrowserView.swift in Sources */,
+				OD0000000000000000000006 /* NoteDetailView.swift in Sources */,
+				OD0000000000000000000007 /* FolderPickerButton.swift in Sources */,
+				OD0000000000000000000008 /* MarkdownView.swift in Sources */,
+				OD0000000000000000000009 /* MarkdownRenderer.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		OD8000000000000000000002 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				OD000000000000000000000B /* MarkdownRendererTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		ODA000000000000000000001 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = OD4000000000000000000001 /* od-notes */;
+			targetProxy = OD2000000000000000000001 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		ODAA00000000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		ODAA00000000000000000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		ODAA00000000000000000003 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 68Y3T4J39B;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "od-notes/Info.plist";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.wandermyz.od-notes";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		ODAA00000000000000000004 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 68Y3T4J39B;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "od-notes/Info.plist";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.wandermyz.od-notes";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		ODAA00000000000000000005 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.wandermyz.od-notestests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/od-notes.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/od-notes";
+			};
+			name = Debug;
+		};
+		ODAA00000000000000000006 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.wandermyz.od-notestests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/od-notes.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/od-notes";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		OD7000000000000000000001 /* Build configuration list for PBXProject "od-notes" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				ODAA00000000000000000001 /* Debug */,
+				ODAA00000000000000000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		OD7000000000000000000002 /* Build configuration list for PBXNativeTarget "od-notes" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				ODAA00000000000000000003 /* Debug */,
+				ODAA00000000000000000004 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		OD7000000000000000000003 /* Build configuration list for PBXNativeTarget "od-notesTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				ODAA00000000000000000005 /* Debug */,
+				ODAA00000000000000000006 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = OD3000000000000000000001 /* Project object */;
+}
