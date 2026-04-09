@@ -9,6 +9,7 @@ import yaml
 from croniter import croniter
 
 from claude_code_slack.claude_runner import run_claude
+from claude_code_slack.formatting import markdown_to_mrkdwn
 from claude_code_slack.config import CRON_FILE, WORKSPACE_DIR, slack_cron_channel
 from claude_code_slack.store import SessionStore
 
@@ -100,6 +101,7 @@ def _run_cron_task(task: CronTask, slack_client) -> None:
     logger.info(f"Cron task={task.name} completed with notification")
 
     # Post Claude's response directly to Slack
+    display_text = markdown_to_mrkdwn(display_text)
     try:
         response = slack_client.chat_postMessage(channel=channel, text=display_text)
         thread_ts = response["ts"]

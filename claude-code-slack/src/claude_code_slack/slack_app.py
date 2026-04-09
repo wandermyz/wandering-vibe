@@ -12,6 +12,7 @@ from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
 
 from claude_code_slack.claude_runner import run_claude
+from claude_code_slack.formatting import markdown_to_mrkdwn
 from claude_code_slack.config import (
     ATTACHMENTS_DIR,
     UPLOADS_DIR,
@@ -243,6 +244,7 @@ def create_app() -> App:
 
         # Extract <attachment> tags and upload files, then post the text
         response_text = _extract_and_upload_attachments(result.text, client, channel, reply_ts)
+        response_text = markdown_to_mrkdwn(response_text)
         logger.info(f"Posting reply to channel={channel}, thread_ts={reply_ts}")
         if response_text:
             say(text=response_text, thread_ts=reply_ts)
