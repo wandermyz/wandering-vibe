@@ -14,6 +14,7 @@ struct ODNotesApp: App {
 
 struct RootView: View {
     @Environment(NotesStore.self) private var store
+    @State private var showingFolderPicker = false
 
     var body: some View {
         NavigationStack {
@@ -26,8 +27,10 @@ struct RootView: View {
                     } description: {
                         Text("Select a folder from OneDrive or Files to browse your Markdown notes.")
                     } actions: {
-                        FolderPickerButton { url in
-                            store.setFolder(url)
+                        Button {
+                            showingFolderPicker = true
+                        } label: {
+                            Label("Select Folder", systemImage: "folder.badge.plus")
                         }
                     }
                 }
@@ -44,8 +47,10 @@ struct RootView: View {
                 if store.folderURL != nil {
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Menu {
-                            FolderPickerButton { url in
-                                store.setFolder(url)
+                            Button {
+                                showingFolderPicker = true
+                            } label: {
+                                Label("Change Folder", systemImage: "folder.badge.plus")
                             }
                             Button(role: .destructive) {
                                 store.changeFolder()
@@ -56,6 +61,14 @@ struct RootView: View {
                             Image(systemName: "ellipsis.circle")
                         }
                     }
+                }
+            }
+            .fileImporter(
+                isPresented: $showingFolderPicker,
+                allowedContentTypes: [.folder]
+            ) { result in
+                if case .success(let url) = result {
+                    store.setFolder(url)
                 }
             }
         }
