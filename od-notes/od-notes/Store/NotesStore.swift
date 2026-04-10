@@ -11,7 +11,6 @@ enum LoadingState: Equatable {
 @Observable
 class NotesStore {
     var folderURL: URL?
-    private var accessingResource = false
 
     init() {
         if let url = BookmarkManager.resolve() {
@@ -20,18 +19,11 @@ class NotesStore {
     }
 
     func setFolder(_ url: URL) {
-        guard url.startAccessingSecurityScopedResource() else {
-            return
-        }
-        url.stopAccessingSecurityScopedResource()
+        let accessing = url.startAccessingSecurityScopedResource()
+        defer { if accessing { url.stopAccessingSecurityScopedResource() } }
 
-        do {
-            try BookmarkManager.save(url: url)
-            folderURL = url
-        } catch {
-            // Bookmark save failed; folder won't persist across launches
-            folderURL = url
-        }
+        try? BookmarkManager.save(url: url)
+        folderURL = url
     }
 
     func changeFolder() {
@@ -40,11 +32,9 @@ class NotesStore {
     }
 
     func enumerateDirectory(at url: URL) async -> Result<[FileItem], Error> {
-        let folderURL = self.folderURL ?? url
-        guard folderURL.startAccessingSecurityScopedResource() else {
-            return .failure(NSError(domain: "ODNotes", code: 1, userInfo: [NSLocalizedDescriptionKey: "Cannot access folder"]))
-        }
-        defer { folderURL.stopAccessingSecurityScopedResource() }
+        let root = self.folderURL ?? url
+        let accessing = root.startAccessingSecurityScopedResource()
+        defer { if accessing { root.stopAccessingSecurityScopedResource() } }
 
         do {
             let contents = try FileManager.default.contentsOfDirectory(
@@ -84,10 +74,8 @@ class NotesStore {
         guard let folderURL else {
             return .failure(NSError(domain: "ODNotes", code: 2, userInfo: [NSLocalizedDescriptionKey: "No folder selected"]))
         }
-        guard folderURL.startAccessingSecurityScopedResource() else {
-            return .failure(NSError(domain: "ODNotes", code: 1, userInfo: [NSLocalizedDescriptionKey: "Cannot access folder"]))
-        }
-        defer { folderURL.stopAccessingSecurityScopedResource() }
+        let accessing = folderURL.startAccessingSecurityScopedResource()
+        defer { if accessing { folderURL.stopAccessingSecurityScopedResource() } }
 
         do {
             let content = try String(contentsOf: url, encoding: .utf8)
@@ -101,10 +89,8 @@ class NotesStore {
         guard let folderURL else {
             return NSError(domain: "ODNotes", code: 2, userInfo: [NSLocalizedDescriptionKey: "No folder selected"])
         }
-        guard folderURL.startAccessingSecurityScopedResource() else {
-            return NSError(domain: "ODNotes", code: 1, userInfo: [NSLocalizedDescriptionKey: "Cannot access folder"])
-        }
-        defer { folderURL.stopAccessingSecurityScopedResource() }
+        let accessing = folderURL.startAccessingSecurityScopedResource()
+        defer { if accessing { folderURL.stopAccessingSecurityScopedResource() } }
 
         do {
             try content.write(to: url, atomically: true, encoding: .utf8)
