@@ -17,9 +17,11 @@ from yuki_conductor.config import (
     ATTACHMENTS_DIR,
     UPLOADS_DIR,
     CLAUDE_WORKING_DIR,
+    SlackMode,
     slack_app_dm_channel,
     slack_app_token,
     slack_bot_token,
+    slack_mode,
 )
 from yuki_conductor.cron_scheduler import start_cron_scheduler
 from yuki_conductor.store import VALID_MODELS, ModelStore, SessionStore
@@ -283,8 +285,24 @@ def _connection_error_listener(error: Exception) -> None:
 
 
 def start() -> None:
-    """Start the Slack bot in Socket Mode (blocking)."""
+    """Start yuki-conductor (blocking). Slack integration is dispatched by SLACK_MODE."""
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(levelname)s %(message)s")
+
+    mode = slack_mode()
+    logger.info(f"Starting yuki-conductor with SLACK_MODE={mode.value}")
+
+    if mode is SlackMode.SOCKET:
+        _start_socket_mode()
+    elif mode is SlackMode.TOKEN:
+        _start_token_mode()
+    elif mode is SlackMode.NONE:
+        _start_no_slack()
+    else:
+        raise RuntimeError(f"Unhandled SlackMode: {mode!r}")
+
+
+def _start_socket_mode() -> None:
+    """Run with slack-bolt Socket Mode (current default)."""
     app = create_app()
 
     # Start web server (background thread)
@@ -312,3 +330,16 @@ def start() -> None:
         logger.warning("Failed to send restart notification", exc_info=True)
 
     handler.start()
+
+
+def _start_token_mode() -> None:
+    """Run with direct Slack tokens (Web API only, no Socket Mode)."""
+    raise NotImplementedError("SLACK_MODE=TOKEN is not yet implemented")
+
+
+def _start_no_slack() -> None:
+    """Run web server and cron scheduler with no Slack integration."""
+    start_web_server()
+    start_cron_scheduler(slack_client=None)
+    logger.info("Slack integration disabled (SLACK_MODE=NONE); web + cron only")
+    threading.Event().wait()

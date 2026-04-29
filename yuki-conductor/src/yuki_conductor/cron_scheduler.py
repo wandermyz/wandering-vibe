@@ -78,9 +78,11 @@ _CRON_PROMPT_PREFIX = (
 
 
 def _run_cron_task(task: CronTask, slack_client) -> None:
-    """Execute a single cron task: run Claude, post to Slack only if <notify>."""
-    channel = slack_cron_channel()
+    """Execute a single cron task: run Claude, post to Slack only if <notify>.
 
+    When `slack_client` is None (Slack disabled), notifications are logged
+    instead of posted.
+    """
     logger.info(f"Cron task={task.name} starting, running Claude...")
 
     # Run Claude with the cron prompt, prefixed with notify/silence instructions
@@ -100,7 +102,12 @@ def _run_cron_task(task: CronTask, slack_client) -> None:
 
     logger.info(f"Cron task={task.name} completed with notification")
 
+    if slack_client is None:
+        logger.info(f"Cron task={task.name} notification (Slack disabled): {display_text}")
+        return
+
     # Post Claude's response directly to Slack
+    channel = slack_cron_channel()
     display_text = markdown_to_mrkdwn(display_text)
     try:
         response = slack_client.chat_postMessage(channel=channel, text=display_text)
@@ -162,11 +169,14 @@ def _scheduler_loop(slack_client, stop_event: threading.Event) -> None:
         stop_event.wait(timeout=30)
 
 
-def start_cron_scheduler(slack_client) -> threading.Event:
+def start_cron_scheduler(slack_client=None) -> threading.Event:
     """Initialize workspace and start the cron scheduler thread.
 
     The scheduler reloads workspace/cron.yaml every 30 seconds,
     so changes take effect without restarting the daemon.
+
+    Pass `slack_client=None` to run cron tasks without Slack delivery
+    (notifications get logged instead).
 
     Returns a stop_event that can be set to stop the scheduler.
     """
