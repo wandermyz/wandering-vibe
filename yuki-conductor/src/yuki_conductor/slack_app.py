@@ -11,9 +11,9 @@ import urllib.request
 from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
 
-from claude_code_slack.claude_runner import run_claude
-from claude_code_slack.formatting import markdown_to_mrkdwn
-from claude_code_slack.config import (
+from yuki_conductor.claude_runner import run_claude
+from yuki_conductor.formatting import markdown_to_mrkdwn
+from yuki_conductor.config import (
     ATTACHMENTS_DIR,
     UPLOADS_DIR,
     CLAUDE_WORKING_DIR,
@@ -21,9 +21,9 @@ from claude_code_slack.config import (
     slack_app_token,
     slack_bot_token,
 )
-from claude_code_slack.cron_scheduler import start_cron_scheduler
-from claude_code_slack.store import VALID_MODELS, ModelStore, SessionStore
-from claude_code_slack.web_server import start_web_server
+from yuki_conductor.cron_scheduler import start_cron_scheduler
+from yuki_conductor.store import VALID_MODELS, ModelStore, SessionStore
+from yuki_conductor.web_server import start_web_server
 
 logger = logging.getLogger(__name__)
 
@@ -296,7 +296,7 @@ def start() -> None:
     handler = SocketModeHandler(app, slack_app_token())
     handler.client.on_error_listeners.append(_connection_error_listener)
     logger.info("Connection watchdog installed")
-    logger.info("Starting claude-code-slack in Socket Mode...")
+    logger.info("Starting yuki-conductor in Socket Mode...")
 
     # Notify the app DM channel that the daemon has (re)started
     try:
@@ -306,7 +306,7 @@ def start() -> None:
         ).stdout.strip() or "unknown"
         app.client.chat_postMessage(
             channel=slack_app_dm_channel(),
-            text=f":arrows_counterclockwise: claude-code-slack daemon restarted (commit `{commit}`).",
+            text=f":arrows_counterclockwise: yuki-conductor daemon restarted (commit `{commit}`).",
         )
     except Exception:
         logger.warning("Failed to send restart notification", exc_info=True)

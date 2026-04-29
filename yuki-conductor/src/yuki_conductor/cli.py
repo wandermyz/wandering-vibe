@@ -1,4 +1,4 @@
-"""CLI entry point for claude-code-slack."""
+"""CLI entry point for yuki-conductor."""
 
 import argparse
 import sys
@@ -6,7 +6,7 @@ import sys
 
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(
-        prog="claude-code-slack",
+        prog="yuki-conductor",
         description="Bridge Slack messages to Claude Code CLI",
     )
     sub = parser.add_subparsers(dest="command")
@@ -39,19 +39,19 @@ def main(argv: list[str] | None = None) -> None:
         sys.exit(1)
 
     if args.command == "run":
-        from claude_code_slack.slack_app import start
+        from yuki_conductor.slack_app import start
 
         start()
     elif args.command == "daemon":
-        from claude_code_slack.daemon import handle_daemon
+        from yuki_conductor.daemon import handle_daemon
 
         handle_daemon(args.action)
     elif args.command == "simulate":
         if args.sim_command is None:
             sim_parser.print_help()
             sys.exit(1)
-        from claude_code_slack.claude_runner import run_claude
-        from claude_code_slack.store import SessionStore
+        from yuki_conductor.claude_runner import run_claude
+        from yuki_conductor.store import SessionStore
 
         store = SessionStore()
         if args.sim_command == "message":

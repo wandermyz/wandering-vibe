@@ -5,7 +5,7 @@ import os
 import re
 import subprocess
 
-from claude_code_slack.config import CLAUDE_WORKING_DIR
+from yuki_conductor.config import CLAUDE_WORKING_DIR
 
 logger = logging.getLogger(__name__)
 

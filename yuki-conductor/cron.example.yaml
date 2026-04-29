@@ -1,4 +1,4 @@
-# Example cron tasks configuration for claude-code-slack.
+# Example cron tasks configuration for yuki-conductor.
 # Copy this file to workspace/cron.yaml and edit as needed.
 #
 # Each task has:

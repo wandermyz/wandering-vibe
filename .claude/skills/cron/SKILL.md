@@ -11,7 +11,7 @@ allowed-tools: Read, Write, Edit, Bash
 # Cron Task Manager
 
 Cron tasks are defined in `workspace/cron.yaml` and run automatically
-by the claude-code-slack daemon. Changes take effect within 30 seconds — no
+by the yuki-conductor daemon. Changes take effect within 30 seconds — no
 restart needed.
 
 ## List current tasks

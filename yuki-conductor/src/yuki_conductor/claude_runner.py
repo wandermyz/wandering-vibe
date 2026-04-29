@@ -5,7 +5,7 @@ import os
 import subprocess
 from dataclasses import dataclass
 
-from claude_code_slack.config import CLAUDE_TIMEOUT, CLAUDE_WORKING_DIR
+from yuki_conductor.config import CLAUDE_TIMEOUT, CLAUDE_WORKING_DIR
 
 SLACK_MESSAGE_LIMIT = 4000
 

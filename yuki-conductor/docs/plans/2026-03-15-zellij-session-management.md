@@ -1,16 +1,16 @@
-# Zellij Session Management for claude-code-slack
+# Zellij Session Management for yuki-conductor
 
 ## Context
 
-Currently claude-code-slack only manages Slack-based Claude sessions. This plan adds the ability to create and interact with Claude Code sessions running inside Zellij terminal multiplexer sessions, viewable and controllable directly from the web UI. This enables local terminal-based Claude workflows alongside the existing Slack integration.
+Currently yuki-conductor only manages Slack-based Claude sessions. This plan adds the ability to create and interact with Claude Code sessions running inside Zellij terminal multiplexer sessions, viewable and controllable directly from the web UI. This enables local terminal-based Claude workflows alongside the existing Slack integration.
 
 ## Key Files to Modify/Create
 
 | File | Action |
 |------|--------|
-| `src/claude_code_slack/store.py` | Modify — add `session_type`, `project` columns |
-| `src/claude_code_slack/zellij_manager.py` | **Create** — Zellij CLI wrapper |
-| `src/claude_code_slack/web_server.py` | Modify — add WebSocket + REST endpoints |
+| `src/yuki_conductor/store.py` | Modify — add `session_type`, `project` columns |
+| `src/yuki_conductor/zellij_manager.py` | **Create** — Zellij CLI wrapper |
+| `src/yuki_conductor/web_server.py` | Modify — add WebSocket + REST endpoints |
 | `web/src/App.tsx` | Modify — grouped sidebar, type badges, conditional main view |
 | `web/src/Terminal.tsx` | **Create** — xterm.js terminal component |
 | `web/src/App.css` | Modify — new styles for groups, badges, terminal |
@@ -123,7 +123,7 @@ React component using xterm.js:
 
 ## Verification
 
-1. Start backend: `uv run claude-code-slack run`
+1. Start backend: `uv run yuki-conductor run`
 2. Start frontend dev: `cd web && pnpm dev`
 3. Open web UI — sidebar should show existing Slack sessions grouped under "wandering-vibe"
 4. Click `+` on project group → enter worktree name → verify Zellij session starts (`zellij list-sessions`)

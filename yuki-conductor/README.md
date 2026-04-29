@@ -1,4 +1,4 @@
-# claude-code-slack
+# yuki-conductor
 
 Bridge Slack messages to Claude Code CLI. Messages sent to the bot start a new Claude session; replies in the thread resume the same session for continuous conversation.
 
@@ -24,34 +24,34 @@ Bridge Slack messages to Claude Code CLI. Messages sent to the bot start a new C
 3. **Test locally**
    ```bash
    # Test without Slack (calls real Claude CLI)
-   uv run claude-code-slack simulate message "What is 2+2?"
+   uv run yuki-conductor simulate message "What is 2+2?"
 
    # Resume the session
-   uv run claude-code-slack simulate reply <thread_ts> "And 3+3?"
+   uv run yuki-conductor simulate reply <thread_ts> "And 3+3?"
    ```
 
 4. **Run in foreground**
    ```bash
-   uv run claude-code-slack run
+   uv run yuki-conductor run
    ```
 
 5. **Install as daemon** (auto-starts on login)
    ```bash
-   uv run claude-code-slack daemon install
-   uv run claude-code-slack daemon status
+   uv run yuki-conductor daemon install
+   uv run yuki-conductor daemon status
    ```
 
 ## CLI Reference
 
 ```
-claude-code-slack run                              # Start listener (foreground)
-claude-code-slack daemon install                   # Install + load LaunchAgent
-claude-code-slack daemon uninstall                 # Unload + remove LaunchAgent
-claude-code-slack daemon restart                   # Restart daemon
-claude-code-slack daemon status                    # Check if running
-claude-code-slack daemon log                       # Show log file paths + recent output
-claude-code-slack simulate message "hello"         # Test without Slack
-claude-code-slack simulate reply <ts> "follow up"  # Resume session
+yuki-conductor run                              # Start listener (foreground)
+yuki-conductor daemon install                   # Install + load LaunchAgent
+yuki-conductor daemon uninstall                 # Unload + remove LaunchAgent
+yuki-conductor daemon restart                   # Restart daemon
+yuki-conductor daemon status                    # Check if running
+yuki-conductor daemon log                       # Show log file paths + recent output
+yuki-conductor simulate message "hello"         # Test without Slack
+yuki-conductor simulate reply <ts> "follow up"  # Resume session
 ```
 
 ## Development
@@ -66,4 +66,4 @@ uv run pytest
 2. Each new message spawns `claude -p --dangerously-skip-permissions --output-format json`
 3. The response is posted as a thread reply
 4. Thread replies look up the stored `session_id` and resume with `claude -r <session_id>`
-5. Session mappings (`thread_ts -> session_id`) are persisted in `~/.claude-code-slack/sessions.json`
+5. Session mappings (`thread_ts -> session_id`) are persisted in `~/.yuki-conductor/sessions.json`

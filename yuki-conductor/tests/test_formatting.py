@@ -1,6 +1,6 @@
 """Tests for Markdown → Slack mrkdwn conversion."""
 
-from claude_code_slack.formatting import markdown_to_mrkdwn
+from yuki_conductor.formatting import markdown_to_mrkdwn
 
 
 def test_headings():

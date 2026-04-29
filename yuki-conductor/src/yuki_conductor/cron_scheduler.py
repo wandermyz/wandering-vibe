@@ -8,10 +8,10 @@ from datetime import datetime
 import yaml
 from croniter import croniter
 
-from claude_code_slack.claude_runner import run_claude
-from claude_code_slack.formatting import markdown_to_mrkdwn
-from claude_code_slack.config import CRON_FILE, WORKSPACE_DIR, slack_cron_channel
-from claude_code_slack.store import SessionStore
+from yuki_conductor.claude_runner import run_claude
+from yuki_conductor.formatting import markdown_to_mrkdwn
+from yuki_conductor.config import CRON_FILE, WORKSPACE_DIR, slack_cron_channel
+from yuki_conductor.store import SessionStore
 
 logger = logging.getLogger(__name__)
 

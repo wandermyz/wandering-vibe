@@ -1,6 +1,6 @@
 # Web Agent Conductor — Phase 1
 
-Add an HTTP server with a React frontend to the claude-code-slack daemon, serving as the foundation for a full agent conductor UI.
+Add an HTTP server with a React frontend to the yuki-conductor daemon, serving as the foundation for a full agent conductor UI.
 
 ## Context
 
@@ -13,8 +13,8 @@ Add an HTTP server with a React frontend to the claude-code-slack daemon, servin
 ## Architecture
 
 ```
-claude-code-slack/
-  src/claude_code_slack/
+yuki-conductor/
+  src/yuki_conductor/
     web_server.py        — FastAPI HTTP server (API + static file serving)
     store.py             — Extended: sessions table gets channel_id column
     slack_app.py         — Updated: pass channel_id when storing sessions
@@ -73,7 +73,7 @@ In `slack_app.py`'s `start()`:
 ### 5. Scaffold React frontend
 
 ```
-cd claude-code-slack && pnpm create vite web --template react-ts
+cd yuki-conductor && pnpm create vite web --template react-ts
 ```
 
 **`web/src/App.tsx`**: Two-panel layout — sidebar + main content

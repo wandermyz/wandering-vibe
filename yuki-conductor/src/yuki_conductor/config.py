@@ -12,14 +12,14 @@ _workspace_env = _project_root.parent / "workspace" / ".env"
 _project_env = _project_root / ".env"
 load_dotenv(_workspace_env if _workspace_env.exists() else _project_env, override=True)
 
-DATA_DIR = Path(os.environ.get("CLAUDE_CODE_SLACK_DATA_DIR", Path.home() / ".claude-code-slack"))
+DATA_DIR = Path(os.environ.get("YUKI_CONDUCTOR_DATA_DIR", Path.home() / ".yuki-conductor"))
 LOG_FILE = DATA_DIR / "daemon.log"
 ERR_LOG_FILE = DATA_DIR / "daemon.err.log"
-PLIST_LABEL = "com.user.claude-code-slack"
+PLIST_LABEL = "com.user.yuki-conductor"
 PLIST_PATH = Path.home() / "Library" / "LaunchAgents" / f"{PLIST_LABEL}.plist"
 
 WORKSPACE_DIR = _project_root.parent / "workspace"
-DB_FILE = WORKSPACE_DIR / "claude-code-slack.db"
+DB_FILE = WORKSPACE_DIR / "yuki-conductor.db"
 CRON_FILE = WORKSPACE_DIR / "cron.yaml"
 ATTACHMENTS_DIR = WORKSPACE_DIR / "attachments"
 UPLOADS_DIR = WORKSPACE_DIR / "uploads"

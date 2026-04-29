@@ -21,9 +21,9 @@ from fastapi import FastAPI, HTTPException, Query, WebSocket, WebSocketDisconnec
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from claude_code_slack.config import CLAUDE_WORKING_DIR
-from claude_code_slack.store import SessionStore
-from claude_code_slack import zellij_manager
+from yuki_conductor.config import CLAUDE_WORKING_DIR
+from yuki_conductor.store import SessionStore
+from yuki_conductor import zellij_manager
 
 logger = logging.getLogger(__name__)
 
@@ -262,7 +262,7 @@ def create_api() -> FastAPI:
     return api
 
 
-# Module-level app for `uvicorn claude_code_slack.web_server:app`
+# Module-level app for `uvicorn yuki_conductor.web_server:app`
 app = create_api()
 
 

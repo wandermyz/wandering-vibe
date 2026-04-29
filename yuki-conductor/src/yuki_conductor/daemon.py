@@ -6,7 +6,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from claude_code_slack.config import DATA_DIR, ERR_LOG_FILE, LOG_FILE, PLIST_LABEL, PLIST_PATH
+from yuki_conductor.config import DATA_DIR, ERR_LOG_FILE, LOG_FILE, PLIST_LABEL, PLIST_PATH
 
 
 def _find_uv() -> str:
@@ -38,7 +38,7 @@ def _generate_plist() -> bytes:
 
     plist = {
         "Label": PLIST_LABEL,
-        "ProgramArguments": [uv, "run", "--project", project_dir, "claude-code-slack", "run"],
+        "ProgramArguments": [uv, "run", "--project", project_dir, "yuki-conductor", "run"],
         "KeepAlive": True,
         "RunAtLoad": True,
         "WorkingDirectory": project_dir,

@@ -4,7 +4,7 @@ import sqlite3
 import threading
 from pathlib import Path
 
-from claude_code_slack.config import DB_FILE
+from yuki_conductor.config import DB_FILE
 
 
 class _SqliteKVStore:

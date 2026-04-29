@@ -1,9 +1,9 @@
-# claude-code-slack Development Reference
+# yuki-conductor Development Reference
 
 ## Project Structure
 
 ```
-src/claude_code_slack/
+src/yuki_conductor/
   cli.py            — argparse entry point (run, daemon, simulate)
   config.py         — env loading, path constants
   store.py          — SQLite-backed session & model stores
@@ -20,7 +20,7 @@ web/                — React + Vite frontend (pnpm, TypeScript)
 The personal workspace directory is `workspace/`. This is the place to store all personal information such as cron task definitions, personal notes, and any data that should persist across sessions. **Do not include any personal information in the repo itself** — anything in the repo can end up in git.
 
 Key workspace files:
-- `workspace/claude-code-slack.db` — SQLite database for session and model tracking
+- `workspace/yuki-conductor.db` — SQLite database for session and model tracking
 - `workspace/cron.yaml` — Cron task definitions (see `cron.example.yaml` for format)
 
 ## Cron Scheduler
@@ -32,14 +32,14 @@ Required env var: `SLACK_CRON_CHANNEL` — the Slack channel ID to post cron res
 ## Key Commands
 
 - `uv run pytest` — run all tests
-- `uv run claude-code-slack --help` — show CLI help
-- `uv run claude-code-slack simulate message "test"` — test without Slack
+- `uv run yuki-conductor --help` — show CLI help
+- `uv run yuki-conductor simulate message "test"` — test without Slack
 - `cd web && pnpm dev` — start frontend dev server (proxies /api to port 2333)
 - `cd web && pnpm build` — build frontend for production (output: web/dist/)
 
 ## Architecture
 
-- **Session tracking**: SQLite database at `workspace/claude-code-slack.db` maps `thread_ts → (session_id, channel_id)` and `channel_id → model`
+- **Session tracking**: SQLite database at `workspace/yuki-conductor.db` maps `thread_ts → (session_id, channel_id)` and `channel_id → model`
 - **Web server**: FastAPI on port 2333 (env: `WEB_PORT`), serves React frontend and `/api/sessions` endpoint. Starts in a daemon thread alongside Slack Socket Mode.
 - **Concurrency**: slack-bolt's default thread pool (10 threads); each handler blocks on `subprocess.run`
 - **Claude invocation**: `claude -p --dangerously-skip-permissions --output-format json [-r session_id] "prompt"`

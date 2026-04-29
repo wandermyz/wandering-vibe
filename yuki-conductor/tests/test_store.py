@@ -3,7 +3,7 @@
 import threading
 from pathlib import Path
 
-from claude_code_slack.store import ModelStore, SessionStore, VALID_MODELS
+from yuki_conductor.store import ModelStore, SessionStore, VALID_MODELS
 
 
 def test_session_roundtrip(tmp_path: Path):

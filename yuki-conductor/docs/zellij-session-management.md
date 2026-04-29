@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Zellij session management feature extends claude-code-slack's web UI to create, attach to, and manage Claude Code sessions running inside Zellij terminal multiplexer sessions. Users can interact with full Claude Code terminal sessions directly from the browser, alongside the existing Slack-based sessions.
+The Zellij session management feature extends yuki-conductor's web UI to create, attach to, and manage Claude Code sessions running inside Zellij terminal multiplexer sessions. Users can interact with full Claude Code terminal sessions directly from the browser, alongside the existing Slack-based sessions.
 
 ## Architecture
 
