@@ -8,7 +8,7 @@ src/yuki_conductor/
   config.py         — env loading, path constants
   store.py          — SQLite-backed session & model stores
   claude_runner.py  — subprocess wrapper for claude CLI
-  slack_app.py      — slack-bolt Socket Mode handlers
+  slack_app.py      — Slack handlers + start() dispatcher (NONE/SOCKET/TOKEN)
   cron_scheduler.py — cron task scheduler (reads workspace/cron.yaml)
   daemon.py         — macOS LaunchAgent management
   web_server.py     — FastAPI HTTP server (agent conductor web UI)
@@ -23,11 +23,19 @@ Key workspace files:
 - `workspace/yuki-conductor.db` — SQLite database for session and model tracking
 - `workspace/cron.yaml` — Cron task definitions (see `cron.example.yaml` for format)
 
+## Slack Mode
+
+The daemon's Slack integration is selected by `SLACK_MODE`:
+
+- `SOCKET` (default) — slack-bolt Socket Mode using `SLACK_BOT_TOKEN` + `SLACK_APP_TOKEN`.
+- `NONE` — no Slack. Web server and cron scheduler still run; cron notifications are logged instead of posted.
+- `TOKEN` — direct Slack tokens (not yet implemented; raises `NotImplementedError`).
+
 ## Cron Scheduler
 
 The daemon supports scheduled tasks via `workspace/cron.yaml`. Each task specifies a cron expression, a description, and a Claude prompt. When the cron fires, it posts a new thread in the configured `SLACK_CRON_CHANNEL` and runs Claude Code with the prompt, posting the result as a thread reply. The thread is session-tracked, so follow-up replies in that thread continue the conversation.
 
-Required env var: `SLACK_CRON_CHANNEL` — the Slack channel ID to post cron results to.
+Required env var (only when `SLACK_MODE=SOCKET`): `SLACK_CRON_CHANNEL` — the Slack channel ID to post cron results to.
 
 ## Key Commands
 

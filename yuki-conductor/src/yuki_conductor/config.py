@@ -1,6 +1,7 @@
 """Configuration and path constants."""
 
 import os
+from enum import StrEnum
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -26,6 +27,21 @@ UPLOADS_DIR = WORKSPACE_DIR / "uploads"
 
 CLAUDE_TIMEOUT = int(os.environ.get("CLAUDE_TIMEOUT", "1800"))
 CLAUDE_WORKING_DIR = os.path.expanduser(os.environ.get("CLAUDE_WORKING_DIR", "~/Projects/wandering-vibe"))
+
+
+class SlackMode(StrEnum):
+    NONE = "NONE"
+    SOCKET = "SOCKET"
+    TOKEN = "TOKEN"
+
+
+def slack_mode() -> SlackMode:
+    raw = os.environ.get("SLACK_MODE", SlackMode.SOCKET).strip().upper()
+    try:
+        return SlackMode(raw)
+    except ValueError:
+        valid = ", ".join(m.value for m in SlackMode)
+        raise RuntimeError(f"Invalid SLACK_MODE={raw!r}; expected one of: {valid}")
 
 
 def slack_cron_channel() -> str:
