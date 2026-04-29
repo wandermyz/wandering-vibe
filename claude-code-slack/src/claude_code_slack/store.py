@@ -120,15 +120,29 @@ class SessionStore:
             finally:
                 con.close()
 
+    _SENTINEL = object()
+
     def set(self, key: str, value: str, channel_id: str | None = None,
-            title: str | None = None, session_type: str = "slack",
-            project: str | None = None) -> None:
-        """Store session_id (and optionally channel_id/title) for a thread_ts."""
-        if title and len(title) > self.MAX_TITLE_LEN:
-            title = title[:self.MAX_TITLE_LEN - 1] + "\u2026"
+            title: str | None = _SENTINEL, session_type: str = "slack",
+            project: str | None = _SENTINEL) -> None:
+        """Store session_id (and optionally channel_id/title) for a thread_ts.
+
+        When updating an existing row, title and project are preserved if not
+        explicitly passed (avoids wiping them on thread-reply updates).
+        """
         with self._lock:
             con = self._connect()
             try:
+                existing = con.execute(
+                    "SELECT title, session_type, project FROM sessions WHERE key = ?",
+                    (key,),
+                ).fetchone()
+                if title is self._SENTINEL:
+                    title = existing[0] if existing else None
+                if title and len(title) > self.MAX_TITLE_LEN:
+                    title = title[:self.MAX_TITLE_LEN - 1] + "\u2026"
+                if project is self._SENTINEL:
+                    project = existing[2] if existing else None
                 con.execute(
                     "INSERT OR REPLACE INTO sessions "
                     "(key, value, channel_id, title, session_type, project) "
