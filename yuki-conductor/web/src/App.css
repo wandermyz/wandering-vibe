@@ -1,7 +1,66 @@
-.app {
+.root {
   display: flex;
+  flex-direction: column;
   height: 100dvh;
   max-height: 100dvh;
+  overflow: hidden;
+}
+
+.tabbar {
+  display: flex;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+  background: var(--bg);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+.tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  background: none;
+  border: none;
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+  font-size: 11px;
+  padding: 8px 4px 6px;
+  min-height: 52px;
+  transition: color 0.15s;
+}
+
+.tab:hover {
+  color: var(--text-h);
+}
+
+.tab.active {
+  color: var(--accent);
+}
+
+.tab-icon {
+  width: 24px;
+  height: 24px;
+  display: block;
+}
+
+.tab-label {
+  line-height: 1;
+}
+
+.tab-content {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  overflow: hidden;
+}
+
+.app {
+  display: flex;
+  flex: 1;
+  min-height: 0;
   overflow: hidden;
 }
 
@@ -163,13 +222,14 @@
 
 .new-session-form input {
   font: inherit;
-  font-size: 12px;
+  /* 16px keeps iOS Safari from auto-zooming on focus. */
+  font-size: 16px;
   padding: 2px 6px;
   border: 1px solid var(--border);
   border-radius: 4px;
   background: var(--bg);
   color: var(--text-h);
-  width: 120px;
+  width: 140px;
 }
 
 .new-session-form button {

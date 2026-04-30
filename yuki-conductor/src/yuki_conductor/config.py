@@ -24,6 +24,7 @@ DB_FILE = WORKSPACE_DIR / "yuki-conductor.db"
 CRON_FILE = WORKSPACE_DIR / "cron.yaml"
 ATTACHMENTS_DIR = WORKSPACE_DIR / "attachments"
 UPLOADS_DIR = WORKSPACE_DIR / "uploads"
+WEB_UPLOADS_DIR = UPLOADS_DIR / "web"
 
 CLAUDE_TIMEOUT = int(os.environ.get("CLAUDE_TIMEOUT", "1800"))
 CLAUDE_WORKING_DIR = os.path.expanduser(os.environ.get("CLAUDE_WORKING_DIR", "~/Projects/wandering-vibe"))

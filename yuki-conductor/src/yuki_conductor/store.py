@@ -120,6 +120,18 @@ class SessionStore:
             finally:
                 con.close()
 
+    def get_channel(self, key: str) -> str | None:
+        """Return the channel_id stored for a session, or None if unknown."""
+        with self._lock:
+            con = self._connect()
+            try:
+                row = con.execute(
+                    "SELECT channel_id FROM sessions WHERE key = ?", (key,)
+                ).fetchone()
+                return row[0] if row and row[0] else None
+            finally:
+                con.close()
+
     _SENTINEL = object()
 
     def set(self, key: str, value: str, channel_id: str | None = None,

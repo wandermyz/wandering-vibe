@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from "react";
+import Chat from "./chat/Chat";
 import Terminal from "./Terminal";
 import "./App.css";
+
+type Tab = "sessions" | "chat";
 
 interface Session {
   thread_ts: string;
@@ -171,7 +174,7 @@ function NewZellijForm({
   );
 }
 
-function App() {
+function SessionsView() {
   const [sessions, setSessions] = useState<Session[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
   const [termKey, setTermKey] = useState(0);
@@ -447,6 +450,69 @@ function App() {
           <p className="placeholder">Select a conversation from the sidebar</p>
         )}
       </main>
+    </div>
+  );
+}
+
+function App() {
+  const [tab, setTab] = useState<Tab>(() => {
+    const saved = window.localStorage.getItem("yuki-tab");
+    return saved === "chat" ? "chat" : "sessions";
+  });
+
+  useEffect(() => {
+    window.localStorage.setItem("yuki-tab", tab);
+  }, [tab]);
+
+  return (
+    <div className="root">
+      <div className="tab-content">
+        {tab === "chat" ? <Chat /> : <SessionsView />}
+      </div>
+      <nav className="tabbar" role="tablist">
+        <button
+          role="tab"
+          aria-selected={tab === "chat"}
+          className={`tab ${tab === "chat" ? "active" : ""}`}
+          onClick={() => setTab("chat")}
+        >
+          <svg
+            className="tab-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M21 12a8 8 0 0 1-11.6 7.1L4 21l1.9-5.4A8 8 0 1 1 21 12z" />
+          </svg>
+          <span className="tab-label">Chat</span>
+        </button>
+        <button
+          role="tab"
+          aria-selected={tab === "sessions"}
+          className={`tab ${tab === "sessions" ? "active" : ""}`}
+          onClick={() => setTab("sessions")}
+        >
+          <svg
+            className="tab-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <rect x="3" y="4" width="18" height="16" rx="2" />
+            <path d="M3 9h18" />
+            <path d="M8 4v5" />
+          </svg>
+          <span className="tab-label">Sessions</span>
+        </button>
+      </nav>
     </div>
   );
 }
