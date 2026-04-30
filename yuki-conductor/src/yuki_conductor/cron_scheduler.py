@@ -118,7 +118,12 @@ def _run_cron_task(task: CronTask, slack_client) -> None:
 
     # Store session for potential follow-up in the thread
     if result.session_id:
-        store.set(thread_ts, result.session_id)
+        store.set(
+            thread_ts,
+            result.session_id,
+            channel_id=channel,
+            title=task.description or task.name,
+        )
 
 
 def _build_task_state(tasks: list[CronTask]) -> tuple[list[tuple[CronTask, croniter]], dict[str, datetime]]:
