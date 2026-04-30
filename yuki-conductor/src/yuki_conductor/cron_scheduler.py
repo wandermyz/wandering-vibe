@@ -9,8 +9,8 @@ import yaml
 from croniter import croniter
 
 from yuki_conductor.claude_runner import run_claude
-from yuki_conductor.formatting import markdown_to_mrkdwn
 from yuki_conductor.config import CRON_FILE, WORKSPACE_DIR, slack_cron_channel
+from yuki_conductor.formatting import markdown_to_mrkdwn
 from yuki_conductor.store import SessionStore
 
 logger = logging.getLogger(__name__)
@@ -130,7 +130,8 @@ def _build_task_state(tasks: list[CronTask]) -> tuple[list[tuple[CronTask, croni
 
 def _tasks_changed(old: list[CronTask], new: list[CronTask]) -> bool:
     """Check if the task list has changed (by comparing as tuples)."""
-    to_tuple = lambda t: (t.name, t.schedule, t.description, t.prompt)
+    def to_tuple(t: CronTask) -> tuple[str, str, str, str]:
+        return (t.name, t.schedule, t.description, t.prompt)
     return [to_tuple(t) for t in old] != [to_tuple(t) for t in new]
 
 

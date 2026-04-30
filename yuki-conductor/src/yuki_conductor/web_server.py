@@ -21,9 +21,9 @@ from fastapi import FastAPI, HTTPException, Query, WebSocket, WebSocketDisconnec
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
+from yuki_conductor import zellij_manager
 from yuki_conductor.config import CLAUDE_WORKING_DIR
 from yuki_conductor.store import SessionStore
-from yuki_conductor import zellij_manager
 
 logger = logging.getLogger(__name__)
 

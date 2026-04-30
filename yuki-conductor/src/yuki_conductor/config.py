@@ -39,9 +39,9 @@ def slack_mode() -> SlackMode:
     raw = os.environ.get("SLACK_MODE", SlackMode.SOCKET).strip().upper()
     try:
         return SlackMode(raw)
-    except ValueError:
+    except ValueError as err:
         valid = ", ".join(m.value for m in SlackMode)
-        raise RuntimeError(f"Invalid SLACK_MODE={raw!r}; expected one of: {valid}")
+        raise RuntimeError(f"Invalid SLACK_MODE={raw!r}; expected one of: {valid}") from err
 
 
 def slack_cron_channel() -> str:

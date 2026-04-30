@@ -12,11 +12,10 @@ from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
 
 from yuki_conductor.claude_runner import run_claude
-from yuki_conductor.formatting import markdown_to_mrkdwn
 from yuki_conductor.config import (
     ATTACHMENTS_DIR,
-    UPLOADS_DIR,
     CLAUDE_WORKING_DIR,
+    UPLOADS_DIR,
     SlackMode,
     slack_app_dm_channel,
     slack_app_token,
@@ -24,6 +23,7 @@ from yuki_conductor.config import (
     slack_mode,
 )
 from yuki_conductor.cron_scheduler import start_cron_scheduler
+from yuki_conductor.formatting import markdown_to_mrkdwn
 from yuki_conductor.store import VALID_MODELS, ModelStore, SessionStore
 from yuki_conductor.web_server import start_web_server
 

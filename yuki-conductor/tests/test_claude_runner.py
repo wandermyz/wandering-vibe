@@ -4,7 +4,7 @@ import json
 import subprocess
 from unittest.mock import patch
 
-from yuki_conductor.claude_runner import ClaudeResult, run_claude
+from yuki_conductor.claude_runner import run_claude
 
 
 def _mock_run(stdout="", stderr="", returncode=0, **kwargs):

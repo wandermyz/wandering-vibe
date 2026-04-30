@@ -40,10 +40,21 @@ Required env var (only when `SLACK_MODE=SOCKET`): `SLACK_CRON_CHANNEL` — the S
 ## Key Commands
 
 - `uv run pytest` — run all tests
+- `uv run ruff check .` — run linter
+- `uv run ruff check --fix .` — run linter with auto-fix
 - `uv run yuki-conductor --help` — show CLI help
 - `uv run yuki-conductor simulate message "test"` — test without Slack
 - `cd web && pnpm dev` — start frontend dev server (proxies /api to port 2333)
 - `cd web && pnpm build` — build frontend for production (output: web/dist/)
+
+## Pre-commit / Pre-PR Checks
+
+Before making any commit or creating a PR, you MUST run both:
+
+1. `uv run pytest` — all tests must pass
+2. `uv run ruff check .` — linter must report no errors
+
+Do not commit or open a PR if either fails.
 
 ## Architecture
 
