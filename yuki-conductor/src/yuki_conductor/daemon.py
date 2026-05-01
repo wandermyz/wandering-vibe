@@ -20,6 +20,31 @@ def _project_dir() -> str:
     return str(Path(__file__).resolve().parent.parent.parent)
 
 
+def _build_web_frontend() -> None:
+    """Run `pnpm install --frozen-lockfile && pnpm build` in web/ so the served
+    dist matches the current source. Failures are logged but don't abort the
+    restart — the daemon will keep serving whatever dist already exists.
+    """
+    web_dir = Path(_project_dir()) / "web"
+    if not (web_dir / "package.json").exists():
+        return
+    pnpm = shutil.which("pnpm")
+    if not pnpm:
+        print("pnpm not on PATH; skipping web build")
+        return
+    try:
+        print("Installing web dependencies...")
+        subprocess.run(
+            [pnpm, "install", "--frozen-lockfile"],
+            cwd=web_dir,
+            check=True,
+        )
+        print("Building web frontend...")
+        subprocess.run([pnpm, "build"], cwd=web_dir, check=True)
+    except subprocess.CalledProcessError as exc:
+        print(f"Web frontend build failed: {exc}; previous dist will be served")
+
+
 def _generate_plist() -> bytes:
     uv = _find_uv()
     project_dir = _project_dir()
@@ -70,6 +95,7 @@ def _uninstall():
 
 def _restart():
     if PLIST_PATH.exists():
+        _build_web_frontend()
         subprocess.run(["launchctl", "unload", str(PLIST_PATH)], check=False)
         subprocess.run(["launchctl", "load", str(PLIST_PATH)], check=True)
         print(f"Restarted {PLIST_LABEL}")
