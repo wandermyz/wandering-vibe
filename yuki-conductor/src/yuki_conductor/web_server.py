@@ -8,6 +8,7 @@ import logging
 import os
 import pty
 import select
+import shutil
 import signal
 import struct
 import subprocess
@@ -467,8 +468,36 @@ def create_api() -> FastAPI:
 app = create_api()
 
 
+def _build_web_frontend() -> None:
+    """Run `pnpm install && pnpm build` so the served dist matches the current source.
+
+    Failures fall through to whatever dist already exists on disk; we don't want a
+    bad frontend build to take down the daemon.
+    """
+    web_dir = _WEB_DIST.parent
+    if not (web_dir / "package.json").exists():
+        return
+    pnpm = shutil.which("pnpm")
+    if not pnpm:
+        logger.warning("pnpm not on PATH; skipping web build")
+        return
+    try:
+        logger.info("Installing web dependencies (pnpm install)...")
+        subprocess.run(
+            [pnpm, "install", "--frozen-lockfile"],
+            cwd=web_dir,
+            check=True,
+        )
+        logger.info("Building web frontend (pnpm build)...")
+        subprocess.run([pnpm, "build"], cwd=web_dir, check=True)
+        logger.info("Web frontend build complete")
+    except subprocess.CalledProcessError as exc:
+        logger.error(f"Web frontend build failed: {exc}; serving previous dist if present")
+
+
 def start_web_server() -> None:
     """Start the web server in a daemon thread (non-blocking)."""
+    _build_web_frontend()
     app = create_api()
 
     def _run():
