@@ -1,4 +1,4 @@
-"""Slack Bot Socket Mode handlers."""
+"""Slack Bolt event handlers — thin adapter over messaging.SlackPlatform."""
 
 import logging
 import os
@@ -6,16 +6,12 @@ import re
 import subprocess
 import threading
 import time
-import urllib.request
 
 from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
 
 from yuki_conductor.claude_runner import run_claude
-from yuki_conductor.formatting import markdown_to_mrkdwn
 from yuki_conductor.config import (
-    ATTACHMENTS_DIR,
-    UPLOADS_DIR,
     CLAUDE_WORKING_DIR,
     SlackMode,
     slack_app_dm_channel,
@@ -24,6 +20,9 @@ from yuki_conductor.config import (
     slack_mode,
 )
 from yuki_conductor.cron_scheduler import start_cron_scheduler
+from yuki_conductor.formatting import markdown_to_mrkdwn
+from yuki_conductor.messaging import IncomingMessage, handle_incoming_message
+from yuki_conductor.messaging.slack_platform import SlackPlatform, download_slack_files
 from yuki_conductor.store import VALID_MODELS, ModelStore, SessionStore
 from yuki_conductor.web_server import start_web_server
 
@@ -31,67 +30,6 @@ logger = logging.getLogger(__name__)
 
 store = SessionStore()
 model_store = ModelStore()
-
-_ATTACHMENT_RE = re.compile(r"<attachment>(.*?)</attachment>")
-
-
-def _download_slack_files(files: list[dict], bot_token: str) -> list[str]:
-    """Download Slack file attachments to the uploads directory.
-
-    Returns a list of saved file paths.
-    """
-    UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
-    saved: list[str] = []
-    for f in files:
-        url = f.get("url_private_download") or f.get("url_private")
-        if not url:
-            continue
-        name = f.get("name", "unknown")
-        dest = UPLOADS_DIR / name
-        # Deduplicate filenames
-        if dest.exists():
-            from pathlib import Path
-            base_stem = Path(name).stem
-            suffix = Path(name).suffix
-            counter = 1
-            while dest.exists():
-                dest = UPLOADS_DIR / f"{base_stem}_{counter}{suffix}"
-                counter += 1
-        try:
-            req = urllib.request.Request(url, headers={"Authorization": f"Bearer {bot_token}"})
-            with urllib.request.urlopen(req) as resp, open(dest, "wb") as out:
-                out.write(resp.read())
-            saved.append(str(dest))
-            logger.info(f"Downloaded Slack file {name} -> {dest}")
-        except Exception:
-            logger.error(f"Failed to download Slack file {name}", exc_info=True)
-    return saved
-
-
-def _extract_and_upload_attachments(text: str, client, channel: str, thread_ts: str) -> str:
-    """Find <attachment>filename</attachment> tags in text, upload the files, and strip the tags."""
-    matches = _ATTACHMENT_RE.findall(text)
-    if not matches:
-        return text
-
-    for filename in matches:
-        filepath = ATTACHMENTS_DIR / filename
-        if not filepath.exists():
-            logger.warning(f"Attachment file not found: {filepath}")
-            continue
-        try:
-            client.files_upload_v2(
-                channel=channel,
-                thread_ts=thread_ts,
-                file=str(filepath),
-                filename=filename,
-            )
-            logger.info(f"Uploaded attachment {filepath} to channel={channel}")
-        except Exception:
-            logger.error(f"Failed to upload attachment {filepath}", exc_info=True)
-
-    # Strip attachment tags from the message text
-    return _ATTACHMENT_RE.sub("", text).strip()
 
 
 def create_app() -> App:
@@ -119,35 +57,31 @@ def create_app() -> App:
 
     @app.command("/yuki-title")
     def handle_title_command(ack, command, respond):
-        """Rename the title of a conversation thread."""
         ack()
         respond("Reply with `!title <new title>` in a thread to rename it.")
 
     @app.command("/yuki-usage")
     def handle_usage_command(ack, command, respond, client):
-        """Show bot usage statistics."""
         ack()
 
         lines = ["*Yuki Usage Stats*\n"]
-
-        # Session stats from our database
         stats = store.stats()
-        lines.append(f"*Conversations:*  {stats['total']} total  |  {stats['last_30_days']} last 30d  |  {stats['last_7_days']} last 7d")
+        lines.append(
+            f"*Conversations:*  {stats['total']} total  |  "
+            f"{stats['last_30_days']} last 30d  |  {stats['last_7_days']} last 7d"
+        )
 
-        # Per-channel breakdown (last 30 days)
         if stats["per_channel_30d"]:
             channel_parts = []
             for ch_id, count in stats["per_channel_30d"][:5]:
                 channel_parts.append(f"<#{ch_id}>: {count}")
             lines.append(f"*By channel (30d):*  {' | '.join(channel_parts)}")
 
-        # Model settings
         model_rows = model_store.list_all()
         if model_rows:
             model_parts = [f"<#{k}>: {v}" for k, v in model_rows[:5]]
             lines.append(f"*Model settings:*  {' | '.join(model_parts)}")
 
-        # Claude CLI version
         try:
             proc = subprocess.run(
                 ["claude", "--version"],
@@ -176,14 +110,11 @@ def create_app() -> App:
 
         respond(f"Running `/{skill_name}`...")
         result = run_claude(prompt, model=model)
-
-        response_text = _extract_and_upload_attachments(result.text, client, channel, None)
-        if response_text:
-            respond(response_text)
+        if result.text:
+            respond(markdown_to_mrkdwn(result.text))
 
     @app.event("message")
-    def handle_message(event, say, client):
-        # Skip bot messages, edits, and other subtypes (but allow file_share)
+    def handle_message(event, client):
         subtype = event.get("subtype")
         if subtype and subtype != "file_share":
             return
@@ -197,70 +128,67 @@ def create_app() -> App:
         ts = event["ts"]
         thread_ts = event.get("thread_ts")
         model = model_store.get(channel)
-        logger.info(f"Received message in channel={channel}, channel_type={event.get('channel_type')}, ts={ts}")
+        logger.info(
+            f"Slack message channel={channel} channel_type={event.get('channel_type')} ts={ts}"
+        )
 
-        # Handle !title command in threads
         if thread_ts and text.startswith("!title "):
-            new_title = text[len("!title "):].strip()
+            new_title = text[len("!title ") :].strip()
             if new_title and store.get(thread_ts):
                 store.set_title(thread_ts, new_title)
-                say(text=f"Title set to: *{new_title}*", thread_ts=thread_ts)
+                client.chat_postMessage(
+                    channel=channel,
+                    thread_ts=thread_ts,
+                    text=f"Title set to: *{new_title}*",
+                )
             else:
-                say(text="No session found for this thread.", thread_ts=thread_ts)
+                client.chat_postMessage(
+                    channel=channel,
+                    thread_ts=thread_ts,
+                    text="No session found for this thread.",
+                )
             return
 
-        # Download any Slack file attachments and prefix the prompt
-        if files:
-            saved_paths = _download_slack_files(files, slack_bot_token())
-            attachment_prefix = "".join(f"<attachment>{p}</attachment>\n" for p in saved_paths)
-            text = attachment_prefix + text
-
-        if not text.strip():
+        attachments = download_slack_files(files, slack_bot_token()) if files else []
+        if not text.strip() and not attachments:
             return
 
-        # Add hourglass reaction while processing
-        try:
-            client.reactions_add(channel=channel, name="hourglass_flowing_sand", timestamp=ts)
-        except Exception:
-            logger.debug("Could not add reaction", exc_info=True)
+        # Thread reply with no known session — ignore (matches previous behavior).
+        if thread_ts and store.get(thread_ts) is None:
+            return
 
-        if thread_ts:
-            # Thread reply — resume session if we have one
-            session_id = store.get(thread_ts)
-            if session_id is None:
-                # Unknown thread, ignore
-                _remove_reaction(client, channel, ts)
-                return
-            result = run_claude(text, session_id=session_id, model=model)
-            if result.session_id:
-                store.set(thread_ts, result.session_id, channel_id=channel)
-            reply_ts = thread_ts
-        else:
-            # New top-level message — start new session
-            result = run_claude(text, model=model)
-            if result.session_id:
-                # Use the original message text (without attachment prefixes) as title
-                raw_text = event.get("text", "").strip()
-                store.set(ts, result.session_id, channel_id=channel, title=raw_text)
-            reply_ts = ts
+        is_thread_start = thread_ts is None
+        conversation_key = thread_ts or ts
+        if is_thread_start:
+            # Pre-create the row so SlackPlatform can resolve channel for reactions.
+            store.set(
+                conversation_key,
+                value="",
+                channel_id=channel,
+                title=text or "(attachment)",
+                session_type="slack",
+            )
 
-        # Extract <attachment> tags and upload files, then post the text
-        response_text = _extract_and_upload_attachments(result.text, client, channel, reply_ts)
-        response_text = markdown_to_mrkdwn(response_text)
-        logger.info(f"Posting reply to channel={channel}, thread_ts={reply_ts}")
-        if response_text:
-            say(text=response_text, thread_ts=reply_ts)
+        platform = SlackPlatform(client=client, bot_token=slack_bot_token())
+        msg = IncomingMessage(
+            platform="slack",
+            conversation_key=conversation_key,
+            message_id=ts,
+            text=text,
+            attachments=attachments,
+            is_thread_start=is_thread_start,
+            title_hint=text if is_thread_start else None,
+            model=model,
+        )
 
-        _remove_reaction(client, channel, ts)
+        threading.Thread(
+            target=handle_incoming_message,
+            args=(platform, msg),
+            name=f"slack-msg-{ts}",
+            daemon=True,
+        ).start()
 
     return app
-
-
-def _remove_reaction(client, channel: str, ts: str) -> None:
-    try:
-        client.reactions_remove(channel=channel, name="hourglass_flowing_sand", timestamp=ts)
-    except Exception:
-        logger.debug("Could not remove reaction", exc_info=True)
 
 
 _MAX_CONSECUTIVE_FAILURES = 10
@@ -269,7 +197,6 @@ _failures: list[float] = []
 
 
 def _connection_error_listener(error: Exception) -> None:
-    """Track BrokenPipeErrors and exit if stuck in a reconnect loop."""
     if isinstance(error, BrokenPipeError):
         now = time.monotonic()
         _failures.append(now)
@@ -302,13 +229,9 @@ def start() -> None:
 
 
 def _start_socket_mode() -> None:
-    """Run with slack-bolt Socket Mode (current default)."""
     app = create_app()
 
-    # Start web server (background thread)
     start_web_server()
-
-    # Start cron scheduler with the Slack Web API client
     start_cron_scheduler(app.client)
 
     handler = SocketModeHandler(app, slack_app_token())
@@ -316,12 +239,16 @@ def _start_socket_mode() -> None:
     logger.info("Connection watchdog installed")
     logger.info("Starting yuki-conductor in Socket Mode...")
 
-    # Notify the app DM channel that the daemon has (re)started
     try:
-        commit = subprocess.run(
-            ["git", "rev-parse", "--short", "HEAD"],
-            cwd=CLAUDE_WORKING_DIR, capture_output=True, text=True,
-        ).stdout.strip() or "unknown"
+        commit = (
+            subprocess.run(
+                ["git", "rev-parse", "--short", "HEAD"],
+                cwd=CLAUDE_WORKING_DIR,
+                capture_output=True,
+                text=True,
+            ).stdout.strip()
+            or "unknown"
+        )
         app.client.chat_postMessage(
             channel=slack_app_dm_channel(),
             text=f":arrows_counterclockwise: yuki-conductor daemon restarted (commit `{commit}`).",
@@ -333,12 +260,10 @@ def _start_socket_mode() -> None:
 
 
 def _start_token_mode() -> None:
-    """Run with direct Slack tokens (Web API only, no Socket Mode)."""
     raise NotImplementedError("SLACK_MODE=TOKEN is not yet implemented")
 
 
 def _start_no_slack() -> None:
-    """Run web server and cron scheduler with no Slack integration."""
     start_web_server()
     start_cron_scheduler(slack_client=None)
     logger.info("Slack integration disabled (SLACK_MODE=NONE); web + cron only")
