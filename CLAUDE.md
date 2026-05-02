@@ -1,8 +1,8 @@
 # wandering-vibe
 
-A hybrid monorepo and personal assistant workspace. It contains multiple independent projects version-controlled with git, alongside gitignored local folders for personal use:
+A hybrid monorepo and personal assistant workspace. It contains multiple independent projects version-controlled with git, alongside personal data stored outside the repo:
 
-- **`workspace/`** — Personal tracking (memory, reminder states, cron). Gitignored.
+- **`~/.yuki-conductor/workspace/`** — Personal tracking (memory, reminder states, cron). Lives outside the repo so it's never accidentally committed; shared with yuki-conductor.
 - **`obsidian/`** — Personal notes (Obsidian vault). Gitignored.
 
 **Personal information should never be committed to git.**
@@ -19,19 +19,19 @@ Each project has its own `docs/` folder for documentation. Project plans should 
 
 ## Memory System
 
-Project memory is stored as plain Markdown files in `workspace/memory/`. Only what is written to files persists across sessions.
+Project memory is stored as plain Markdown files in `~/.yuki-conductor/workspace/memory/`. Only what is written to files persists across sessions.
 
 ### Files
 
-- **`workspace/memory/MEMORY.md`** — Long-term memory. Stores durable facts, decisions, and preferences about the project (architecture choices, recurring user preferences, important context). Updated when something worth remembering permanently comes up.
-- **`workspace/memory/YYYY-MM-DD.md`** — Daily logs. Append-only notes capturing what was discussed or done in a session.
+- **`~/.yuki-conductor/workspace/memory/MEMORY.md`** — Long-term memory. Stores durable facts, decisions, and preferences about the project (architecture choices, recurring user preferences, important context). Updated when something worth remembering permanently comes up.
+- **`~/.yuki-conductor/workspace/memory/YYYY-MM-DD.md`** — Daily logs. Append-only notes capturing what was discussed or done in a session.
 
 ### Loading Memory at Session Start
 
 At the start of every session, always read:
-1. `workspace/memory/MEMORY.md` — long-term facts
-2. Today's daily log: `workspace/memory/YYYY-MM-DD.md` (if it exists)
-3. Yesterday's daily log: `workspace/memory/YYYY-MM-DD.md` (if it exists)
+1. `~/.yuki-conductor/workspace/memory/MEMORY.md` — long-term facts
+2. Today's daily log: `~/.yuki-conductor/workspace/memory/YYYY-MM-DD.md` (if it exists)
+3. Yesterday's daily log: `~/.yuki-conductor/workspace/memory/YYYY-MM-DD.md` (if it exists)
 
 ### Writing Memory
 

@@ -90,7 +90,7 @@ playwright-cli press k
 Once playing, take a screenshot and save it as an attachment:
 
 ```bash
-playwright-cli screenshot --filename=workspace/attachments/YYYY-MM-DD-cat-tv.png
+playwright-cli screenshot --filename=~/.yuki-conductor/workspace/attachments/YYYY-MM-DD-cat-tv.png
 ```
 
 (Replace `YYYY-MM-DD` with today's date.)
@@ -124,4 +124,4 @@ playwright-cli close
 - The snapshot is the most reliable way to find the Skip button ref — don't guess the selector
 - Live streams (24/7 cat TV channels) usually have pre-roll ads but no mid-roll ads
 - Close the Live Chat sidebar on live streams — it covers part of the video
-- Screenshot goes to `workspace/attachments/` — make sure that directory exists (`mkdir -p workspace/attachments`)
+- Screenshot goes to `~/.yuki-conductor/workspace/attachments/` — make sure that directory exists (`mkdir -p ~/.yuki-conductor/workspace/attachments`)

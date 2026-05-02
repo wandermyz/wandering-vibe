@@ -10,7 +10,7 @@ allowed-tools: Read, Write, Edit, Bash
 
 # Cron Task Manager
 
-Cron tasks are defined in `workspace/cron.yaml` and run automatically
+Cron tasks are defined in `~/.yuki-conductor/workspace/cron.yaml` and run automatically
 by the yuki-conductor daemon. Changes take effect within 30 seconds — no
 restart needed.
 
@@ -19,12 +19,12 @@ restart needed.
 Read the file and show all tasks with their schedule and description:
 
 ```bash
-cat workspace/cron.yaml
+cat ~/.yuki-conductor/workspace/cron.yaml
 ```
 
 ## Add or edit a task
 
-Edit `workspace/cron.yaml`. Each task has:
+Edit `~/.yuki-conductor/workspace/cron.yaml`. Each task has:
 
 ```yaml
 tasks:
@@ -50,16 +50,16 @@ Format: `minute hour day-of-month month day-of-week`
 
 ## Remove a task
 
-Delete the task's entry from `workspace/cron.yaml`.
+Delete the task's entry from `~/.yuki-conductor/workspace/cron.yaml`.
 
 ## State tracking
 
 For tasks that need to persist state between runs (e.g. "already done this month"), write
-Markdown files (`.md`) into the `workspace/` directory. Example:
+Markdown files (`.md`) into the `~/.yuki-conductor/workspace/` directory. Example:
 
 ```
-workspace/invoice_reminder_state.md
-workspace/concert_check_state.md
+~/.yuki-conductor/workspace/invoice_reminder_state.md
+~/.yuki-conductor/workspace/concert_check_state.md
 ```
 
 Use plain Markdown with a short human-readable summary. Claude can read and overwrite
@@ -75,6 +75,6 @@ When a cron fires, the daemon:
 ## User request: $ARGUMENTS
 
 Help the user with the above. If they want to add or modify a task, read the
-current `workspace/cron.yaml` first, then make the change with Edit or
+current `~/.yuki-conductor/workspace/cron.yaml` first, then make the change with Edit or
 Write. Show them the final cron expression and confirm what it means in plain
 English.

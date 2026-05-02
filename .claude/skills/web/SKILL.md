@@ -29,9 +29,9 @@ playwright-cli open --headed --browser=chrome <url>
 - Prefer `fill` over `type` for form inputs
 - After navigation or clicks, check the snapshot before proceeding
 - For dropdowns/autocomplete, fill the field then snapshot to see suggestions, then click the right option
-- **Screenshots must be saved to `workspace/attachments/`** with a date-prefixed filename:
+- **Screenshots must be saved to `~/.yuki-conductor/workspace/attachments/`** with a date-prefixed filename:
   ```bash
-  playwright-cli screenshot --filename=workspace/attachments/YYYY-MM-DD-<descriptive-name>.png
+  playwright-cli screenshot --filename=~/.yuki-conductor/workspace/attachments/YYYY-MM-DD-<descriptive-name>.png
   ```
 - After saving a screenshot, always output **only the filename** (not the full path) wrapped in actual `<attachment>` tags as a standalone line in your response. The output must look exactly like this (not in a code block, not in backticks):
 
