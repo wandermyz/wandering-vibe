@@ -9,7 +9,7 @@ A hybrid monorepo and personal assistant workspace. It contains multiple indepen
 
 ## Projects
 
-- **[yuki-conductor](yuki-conductor/)** — Slack integration for Claude Code. See [yuki-conductor/CLAUDE.md](yuki-conductor/CLAUDE.md) for project-specific development reference.
+- **[yuki-conductor](yuki-conductor/)** — Slack integration for Claude Code. **Lives in its own git repository** at [github.com/wandermyz/yuki-conductor](https://github.com/wandermyz/yuki-conductor); the local directory is gitignored from this monorepo. Run git commands inside `yuki-conductor/` to work with its history. See [yuki-conductor/CLAUDE.md](yuki-conductor/CLAUDE.md) for project-specific development reference.
 - **[ai-personality](ai-personality/)** — Voice-interactive AI with a 3D animated sphere. See [ai-personality/CLAUDE.md](ai-personality/CLAUDE.md) for project-specific development reference.
 - **[openclaw-control](openclaw-control/)** — Control and configuration for the local OpenClaw gateway. See [openclaw-control/CLAUDE.md](openclaw-control/CLAUDE.md) for project-specific development reference.
 - **[wandering-md](wandering-md/)** — Minimal iOS app for viewing Markdown files with GitHub-style rendering. See [wandering-md/CLAUDE.md](wandering-md/CLAUDE.md) for project-specific development reference.
