@@ -96,21 +96,21 @@ meow/
 
 ## Slack app setup
 
-Manual one-time step before the daemon can post.
+We're reusing the existing `wandermyz.yuki` Slack app rather than creating a new one — keeps the bot landscape simpler. Messages will appear as "Yuki", not "Meow"; that's a cosmetic mismatch we accept (the `:cat:` emoji + post text make the source obvious).
 
-1. Go to https://api.slack.com/apps → **Create New App** → *From scratch*.
-2. **App name:** `wandermyz.meow`. Pick the personal workspace.
-3. **App Home → App Display Name** → `Meow` (this is the visible bot name in messages).
-4. **OAuth & Permissions → Scopes → Bot Token Scopes:** add `chat:write` and `files:write` (needed for the audio snippet upload).
-5. **Install App** → copy the `xoxb-…` bot token.
-6. User specifies the destination **channel ID** (`C…`) in config; invite `@Meow` to that channel.
-7. Store the token at `~/.yuki-conductor/workspace/meow/config.toml` (gitignored), e.g.:
+If `wandermyz.yuki` doesn't already have the right scopes for this use case, ensure it has:
+- `chat:write`
+- `files:write` (for the audio snippet upload)
 
-   ```toml
-   [slack]
-   bot_token = "xoxb-..."
-   channel   = "C0123456789"   # channel ID, supplied by user
-   ```
+Reinstall the app to the workspace if scopes were added, then invite the bot to the destination channel.
+
+Config file at `~/.yuki-conductor/workspace/meow/config.toml` (gitignored):
+
+```toml
+[slack]
+bot_token = "xoxb-..."        # wandermyz.yuki bot token
+channel   = "C0123456789"     # destination channel ID
+```
 
 ## Detection tuning
 
@@ -133,7 +133,7 @@ Decision: `T_trigger = 0.30` on `max(Meow, Cat, Caterwaul)` catches 5 of 6 with 
 | Window / hop           | 1.0 s / 0.5 s | Overlap matches YAMNet's native cadence and gives short isolated meows two chances to land near the centre of a window. With non-overlap, 3/6 test clips failed the consecutive-frame check. |
 | Trigger signal         | `max(Meow, Cat, Caterwaul)` | `Cat` is broader and more sensitive than `Meow`; `Caterwaul` covers distress. |
 | `T_trigger`            | 0.30  | Catches 5/6 boosted test files end-to-end through the streaming simulator. |
-| `N` consecutive frames | 2     | ~1 s of sustained signal; suppresses single-frame spikes.                  |
+| `N` consecutive frames | 1     | Originally 2, but live testing showed real meows often fit inside one ~1 s window and a short isolated meow can fall outside any adjacent window's centre. The cooldown still prevents spam; in a "no humans, no TV" environment, single-window false positives are bounded by household sounds (HVAC, fridge) which we'll triage in Phase 3. |
 | Cooldown               | 60 s  | Phase 2; one alert per session.                                            |
 | RMS gate               | -45 dBFS | Phase 3; skips inference on silence.                                    |
 
@@ -178,9 +178,9 @@ Each alert includes a short clip for verification.
 
 ## Implementation phases
 
-1. **CLI prototype** — `python -m meow` runs YAMNet on the system default mic and prints detections to stdout. No Slack yet.
-2. **Slack integration** — wire `notifier.py`, post text alert + 3 s WAV snippet to the configured channel ID.
-3. **Tuning pass** — record Siggraph; record household false-positive sounds (fridge, HVAC, doorbell, neighbor dog); pick thresholds.
+1. **CLI prototype** ✅ — `python -m meow` runs YAMNet on the system default mic and prints detections to stdout. Calibrated thresholds and the boost step against six real recordings.
+2. **Slack integration** ✅ — `config.py` loads `~/.yuki-conductor/workspace/meow/config.toml`; `notifier.py` posts `:cat:` text + uploads a 3 s WAV snippet via `files_upload_v2` (initial comment keeps message + audio together). Snippet is captured from a separate ring buffer of *unboosted* audio so the user hears what the mic actually heard. 60 s cooldown prevents one meowing session from spamming the channel.
+3. **Tuning pass** — record Siggraph in situ; record household false-positive sounds (fridge, HVAC, doorbell, neighbor dog); pick final thresholds.
 4. **launchd packaging** — plist template + install script. Validate autostart and crash recovery.
 5. **Health check** — daily heartbeat message ("meow daemon alive, X meows today") so we notice if it dies silently. Optional.
 
