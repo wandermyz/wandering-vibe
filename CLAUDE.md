@@ -14,6 +14,7 @@ A hybrid monorepo and personal assistant workspace. It contains multiple indepen
 - **[openclaw-control](openclaw-control/)** — Control and configuration for the local OpenClaw gateway. See [openclaw-control/CLAUDE.md](openclaw-control/CLAUDE.md) for project-specific development reference.
 - **[wandering-md](wandering-md/)** — Minimal iOS app for viewing Markdown files with GitHub-style rendering. See [wandering-md/CLAUDE.md](wandering-md/CLAUDE.md) for project-specific development reference.
 - **[od-notes](od-notes/)** — iOS app for browsing and editing Markdown notes from Enterprise OneDrive via File Provider. See [od-notes/CLAUDE.md](od-notes/CLAUDE.md) for project-specific development reference.
+- **[nav-mcp](nav-mcp/)** — MCP server exposing Google Routes API for travel-time/distance queries from Claude Code. See [nav-mcp/README.md](nav-mcp/README.md) for setup.
 
 Each project has its own `docs/` folder for documentation. Project plans should always be saved under `<project_dir>/docs/plans/<YYYY-MM-DD>-<plan-title>.md`.
 
