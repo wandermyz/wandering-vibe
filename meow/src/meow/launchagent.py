@@ -11,7 +11,7 @@ from pathlib import Path
 PLIST_LABEL = "com.wandermyz.meow"
 PLIST_PATH = Path.home() / "Library" / "LaunchAgents" / f"{PLIST_LABEL}.plist"
 
-LOG_DIR = Path.home() / ".yuki-conductor" / "workspace" / "logs"
+LOG_DIR = Path.home() / ".yuki-conductor" / "logs"
 STDOUT_LOG = LOG_DIR / "meow.out.log"
 STDERR_LOG = LOG_DIR / "meow.err.log"
 

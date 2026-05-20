@@ -158,7 +158,7 @@ Because nobody is home, we can be aggressive on recall and tolerate a few false 
 
 - Plist at `~/Library/LaunchAgents/com.wandermyz.meow.plist`.
 - `RunAtLoad=true`, `KeepAlive=true` (restart on crash).
-- `StandardOutPath` / `StandardErrorPath` → `~/.yuki-conductor/workspace/logs/meow.{out,err}.log`.
+- `StandardOutPath` / `StandardErrorPath` → `~/.yuki-conductor/logs/meow.{out,err}.log` (outside `workspace/` because `workspace/` syncs to Obsidian).
 - Microphone permission: macOS will prompt the first time; the agent must run as the user, not as root, so the TCC prompt actually appears. Confirm permission persists across reboots.
 
 ## Audio snippet attachment
@@ -181,7 +181,7 @@ Each alert includes a short clip for verification.
 1. **CLI prototype** ✅ — `python -m meow` runs YAMNet on the system default mic and prints detections to stdout. Calibrated thresholds and the boost step against six real recordings.
 2. **Slack integration** ✅ — `config.py` loads `~/.yuki-conductor/workspace/meow/config.toml`; `notifier.py` posts `:cat:` text + uploads a 10 s WAV snippet via `files_upload_v2` (initial comment keeps message + audio together). Snippet is captured from a separate ring buffer of *unboosted* audio so the user hears what the mic actually heard. 60 s cooldown prevents one meowing session from spamming the channel.
 3. **Tuning pass** — record Siggraph in situ; record household false-positive sounds (fridge, HVAC, doorbell, neighbor dog); pick final thresholds.
-4. **launchd packaging** ✅ — `meow daemon {install,uninstall,restart,status,log}` (see `src/meow/launchagent.py`) generates and loads `~/Library/LaunchAgents/com.wandermyz.meow.plist`. Plist runs `uv run --project <repo>/meow meow run` with `KeepAlive=true`, `RunAtLoad=true`, and stdout/stderr at `~/.yuki-conductor/workspace/logs/meow.{out,err}.log`. Validate autostart and crash recovery on the home Mac mini.
+4. **launchd packaging** ✅ — `meow daemon {install,uninstall,restart,status,log}` (see `src/meow/launchagent.py`) generates and loads `~/Library/LaunchAgents/com.wandermyz.meow.plist`. Plist runs `uv run --project <repo>/meow meow run` with `KeepAlive=true`, `RunAtLoad=true`, and stdout/stderr at `~/.yuki-conductor/logs/meow.{out,err}.log`. Validate autostart and crash recovery on the home Mac mini.
 5. **Health check** — daily heartbeat message ("meow daemon alive, X meows today") so we notice if it dies silently. Optional.
 
 ## Risks

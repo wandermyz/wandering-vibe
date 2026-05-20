@@ -36,7 +36,7 @@ SNIPPET_SECONDS = 10.0
 SNIPPET_SAMPLES = int(TARGET_RATE * SNIPPET_SECONDS)
 COOLDOWN_SECONDS = 60.0
 
-LOG_DIR = Path.home() / ".yuki-conductor" / "workspace" / "logs"
+LOG_DIR = Path.home() / ".yuki-conductor" / "logs"
 LOG_FILE = LOG_DIR / "meow.log"
 LOG_MAX_BYTES = 10 * 1024 * 1024
 LOG_BACKUP_COUNT = 1
