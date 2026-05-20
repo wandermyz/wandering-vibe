@@ -94,17 +94,6 @@ def start(cfg: SlackConfig) -> None:
         if path is not None:
             log.info("reactions: labeled %s as %s", path.stem, verdict)
 
-    # We share the Slack app (and app_token) with yuki-conductor. Slack
-    # broadcasts every event to all Socket Mode connections, so meow's socket
-    # also receives `message` events. Bolt's Socket Mode adapter only sends an
-    # ack envelope when a listener matches (status=200); an unhandled event
-    # returns 404 and silently skips the ack, prompting Slack to retry the
-    # delivery — which yuki then re-processes. Register no-op handlers for the
-    # events yuki subscribes to so meow acks them and Slack stops retrying.
-    @app.event("message")
-    def _ack_message(ack):
-        ack()
-
     # Catch any reactions added while we were offline.
     try:
         _sweep_offline_reactions(app.client)

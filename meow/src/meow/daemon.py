@@ -18,7 +18,7 @@ from .capture import (
     open_input_stream,
     query_default_input,
 )
-from .config import Config, config_path
+from .config import Config, env_path
 from .detector import YamnetDetector
 from .enhance import boost
 from .notifier import SlackNotifier
@@ -79,7 +79,7 @@ def run() -> None:
         log.info("slack notifier enabled, channel=%s", cfg.slack.channel)
         slack_reactions.start(cfg.slack)
     else:
-        log.info("no slack config at %s — stdout/log only", config_path())
+        log.info("no slack config at %s — stdout/log only", env_path())
 
     log.info("loading YAMNet (first run downloads weights)...")
     detector = YamnetDetector()

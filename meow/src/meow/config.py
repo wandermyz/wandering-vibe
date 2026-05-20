@@ -1,27 +1,33 @@
-"""Config loaded from ~/.yuki-conductor/workspace/meow/config.toml.
+"""Config loaded from ~/.meow/.env via python-dotenv.
 
-Override the path with the MEOW_CONFIG environment variable.
+Override the path with the MEOW_ENV environment variable.
 
-Schema:
+Schema (.env keys):
 
-    [slack]
-    bot_token = "xoxb-..."
-    channel   = "C0123456789"
-    app_token = "xapp-..."   # optional; enables reaction-based TP/FP labeling
+    MEOW_SLACK_BOT_TOKEN=xoxb-...
+    MEOW_SLACK_APP_TOKEN=xapp-...    # optional; enables reaction-based TP/FP labeling
+    MEOW_SLACK_CHANNEL=C0123456789
+
+meow uses its **own** Slack app — not yuki-conductor's. Sharing an app token
+across daemons load-balances events between sockets and drops messages.
 """
 
 from __future__ import annotations
 
 import os
-import tomllib
 from dataclasses import dataclass
 from pathlib import Path
 
-DEFAULT_PATH = Path.home() / ".yuki-conductor" / "workspace" / "meow" / "config.toml"
+from dotenv import load_dotenv
+
+DEFAULT_PATH = Path.home() / ".meow" / ".env"
 
 
-def config_path() -> Path:
-    return Path(os.environ.get("MEOW_CONFIG", DEFAULT_PATH))
+def env_path() -> Path:
+    return Path(os.environ.get("MEOW_ENV", DEFAULT_PATH))
+
+
+load_dotenv(env_path(), override=True)
 
 
 @dataclass(frozen=True)
@@ -37,17 +43,9 @@ class Config:
 
     @classmethod
     def load(cls) -> "Config":
-        path = config_path()
-        if not path.exists():
+        bot = os.environ.get("MEOW_SLACK_BOT_TOKEN")
+        channel = os.environ.get("MEOW_SLACK_CHANNEL")
+        app = os.environ.get("MEOW_SLACK_APP_TOKEN") or None
+        if not bot or not channel:
             return cls(slack=None)
-        with open(path, "rb") as f:
-            data = tomllib.load(f)
-        slack = None
-        if "slack" in data:
-            s = data["slack"]
-            slack = SlackConfig(
-                bot_token=s["bot_token"],
-                channel=s["channel"],
-                app_token=s.get("app_token"),
-            )
-        return cls(slack=slack)
+        return cls(slack=SlackConfig(bot_token=bot, channel=channel, app_token=app))
