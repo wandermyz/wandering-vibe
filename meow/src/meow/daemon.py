@@ -22,6 +22,7 @@ from .config import Config, config_path
 from .detector import YamnetDetector
 from .enhance import boost
 from .notifier import SlackNotifier
+from . import slack_reactions, snippets
 
 WINDOW_SECONDS = 1.0
 HOP_SECONDS = 0.5
@@ -76,6 +77,7 @@ def run() -> None:
     if cfg.slack is not None:
         notifier = SlackNotifier(cfg.slack)
         log.info("slack notifier enabled, channel=%s", cfg.slack.channel)
+        slack_reactions.start(cfg.slack)
     else:
         log.info("no slack config at %s — stdout/log only", config_path())
 
@@ -133,8 +135,12 @@ def run() -> None:
                             "*** TRIGGER *** trigger_score=%.3f snippet_samples=%d",
                             trigger_score, len(snippet),
                         )
+                        snippet_path = snippets.save(scores, trigger_score, dbfs, snippet, TARGET_RATE)
                         if notifier is not None:
-                            notifier.notify(scores, trigger_score, snippet, TARGET_RATE)
+                            posted = notifier.notify(scores, trigger_score, snippet, TARGET_RATE)
+                            if posted is not None:
+                                channel, message_ts = posted
+                                snippets.record_pending(channel, message_ts, snippet_path.stem)
 
 
 def _resample_ratio(target: int, source: int) -> tuple[int, int]:

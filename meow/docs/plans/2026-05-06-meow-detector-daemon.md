@@ -167,8 +167,9 @@ Each alert includes a short clip for verification.
 
 - **Window:** ~10 s ending at the trigger frame, drawn from the rolling ring buffer (no extra recording infra needed — buffer must hold at least 10 s).
 - **Format:** 16 kHz mono WAV (small, no encode dependency). Optionally MP3/OGG later if size matters.
-- **Delivery:** `files_upload_v2` to the same channel, with the alert message as the initial comment so message + audio land together. Stored only in Slack — no local archive.
-- **Retention:** none on our side; rely on Slack's storage. Buffer is overwritten continuously.
+- **Delivery:** `files_upload_v2` to the same channel, with the alert message as the initial comment so message + audio land together. Also persisted locally to `~/.yuki-conductor/meow/snippets/inbox/meow-<ts>.{wav,json}` for TP/FP labeling. JSON sidecar carries trigger score, dBFS, and per-class scores for later threshold tuning.
+- **Labeling:** react to the Slack notification with `:white_check_mark:` for TP or `:x:` for FP. A Socket Mode listener (`slack_reactions.py`) moves the snippet pair from `inbox/` to `tp/` or `fp/`. Falls back to manual `mv inbox/meow-<stem>.* tp/` if reactions are disabled or the daemon is offline (reactions added while offline are caught by a startup sweep against `reactions.get`). Requires `reactions:read` scope + an `app_token` (xapp-…) in `[slack]`.
+- **Retention:** Slack handles its own copy; local copies persist until you delete them. Buffer is overwritten continuously.
 
 ## Audio device
 

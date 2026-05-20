@@ -7,6 +7,7 @@ Schema:
     [slack]
     bot_token = "xoxb-..."
     channel   = "C0123456789"
+    app_token = "xapp-..."   # optional; enables reaction-based TP/FP labeling
 """
 
 from __future__ import annotations
@@ -27,6 +28,7 @@ def config_path() -> Path:
 class SlackConfig:
     bot_token: str
     channel: str
+    app_token: str | None = None
 
 
 @dataclass(frozen=True)
@@ -43,5 +45,9 @@ class Config:
         slack = None
         if "slack" in data:
             s = data["slack"]
-            slack = SlackConfig(bot_token=s["bot_token"], channel=s["channel"])
+            slack = SlackConfig(
+                bot_token=s["bot_token"],
+                channel=s["channel"],
+                app_token=s.get("app_token"),
+            )
         return cls(slack=slack)

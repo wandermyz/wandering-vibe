@@ -10,6 +10,7 @@ dependencies = [
     "tensorflow-hub",
     "scipy",
     "slack-sdk",
+    "slack-bolt",
     "setuptools<81",
 ]
 
