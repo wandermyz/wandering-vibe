@@ -1,7 +1,4 @@
-from .daemon import run
+from .cli import main
 
 if __name__ == "__main__":
-    try:
-        run()
-    except KeyboardInterrupt:
-        print("\n[meow] stopped")
+    main()

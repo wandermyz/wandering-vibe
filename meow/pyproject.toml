@@ -13,6 +13,9 @@ dependencies = [
     "setuptools<81",
 ]
 
+[project.scripts]
+meow = "meow.cli:main"
+
 [build-system]
 requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
