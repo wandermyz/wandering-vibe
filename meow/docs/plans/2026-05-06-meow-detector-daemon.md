@@ -165,7 +165,7 @@ Because nobody is home, we can be aggressive on recall and tolerate a few false 
 
 Each alert includes a short clip for verification.
 
-- **Window:** ~3 s ending at the trigger frame, drawn from the rolling ring buffer (no extra recording infra needed — buffer must hold at least 3 s).
+- **Window:** ~10 s ending at the trigger frame, drawn from the rolling ring buffer (no extra recording infra needed — buffer must hold at least 10 s).
 - **Format:** 16 kHz mono WAV (small, no encode dependency). Optionally MP3/OGG later if size matters.
 - **Delivery:** `files_upload_v2` to the same channel, with the alert message as the initial comment so message + audio land together. Stored only in Slack — no local archive.
 - **Retention:** none on our side; rely on Slack's storage. Buffer is overwritten continuously.
@@ -179,7 +179,7 @@ Each alert includes a short clip for verification.
 ## Implementation phases
 
 1. **CLI prototype** ✅ — `python -m meow` runs YAMNet on the system default mic and prints detections to stdout. Calibrated thresholds and the boost step against six real recordings.
-2. **Slack integration** ✅ — `config.py` loads `~/.yuki-conductor/workspace/meow/config.toml`; `notifier.py` posts `:cat:` text + uploads a 3 s WAV snippet via `files_upload_v2` (initial comment keeps message + audio together). Snippet is captured from a separate ring buffer of *unboosted* audio so the user hears what the mic actually heard. 60 s cooldown prevents one meowing session from spamming the channel.
+2. **Slack integration** ✅ — `config.py` loads `~/.yuki-conductor/workspace/meow/config.toml`; `notifier.py` posts `:cat:` text + uploads a 10 s WAV snippet via `files_upload_v2` (initial comment keeps message + audio together). Snippet is captured from a separate ring buffer of *unboosted* audio so the user hears what the mic actually heard. 60 s cooldown prevents one meowing session from spamming the channel.
 3. **Tuning pass** — record Siggraph in situ; record household false-positive sounds (fridge, HVAC, doorbell, neighbor dog); pick final thresholds.
 4. **launchd packaging** ✅ — `meow daemon {install,uninstall,restart,status,log}` (see `src/meow/launchagent.py`) generates and loads `~/Library/LaunchAgents/com.wandermyz.meow.plist`. Plist runs `uv run --project <repo>/meow meow run` with `KeepAlive=true`, `RunAtLoad=true`, and stdout/stderr at `~/.yuki-conductor/workspace/logs/meow.{out,err}.log`. Validate autostart and crash recovery on the home Mac mini.
 5. **Health check** — daily heartbeat message ("meow daemon alive, X meows today") so we notice if it dies silently. Optional.
