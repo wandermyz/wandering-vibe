@@ -1,0 +1,6 @@
+node_modules/
+dist/
+coverage/
+# Personal config never belongs in git; the default lives in ~/.ios-dist/config.json.
+config.json
+*.local.json
