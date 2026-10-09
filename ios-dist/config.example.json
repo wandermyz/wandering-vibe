@@ -1,0 +1,16 @@
+{
+  "port": 8740,
+  "siteTitle": "My Apps",
+  "keepBuilds": 5,
+  "teamId": "ABCDE12345",
+  "exportMethod": "release-testing",
+  "launchdLabel": "com.example.ios-dist",
+  "tailscaleHttpsPort": 443,
+  "allowedLogins": [],
+  "projects": {
+    "my-app": {
+      "project": "~/Projects/my-app/MyApp.xcodeproj",
+      "scheme": "MyApp"
+    }
+  }
+}
