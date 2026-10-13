@@ -94,6 +94,16 @@ Measured 2026-10-13:
 | A Strata request between two jobs | both jobs succeeded |
 | The guard's wait cut to 2 s | job failed visibly in 2.5 s |
 
+## pi skill: batch ComfyUI work
+
+`pi/skills/comfyui-batching/SKILL.md` is a best-effort hint for pi: queue
+each round's ComfyUI jobs up front and wait once, over-generate rather than
+re-roll, review one contact sheet per round, and keep tool output short.
+Every handover costs a ~30 s Strata reload plus a re-read of the
+conversation. It's installed for pi only, as a symlink:
+`~/.pi/agent/skills/comfyui-batching`. Pi lists it in `<available_skills>`
+in headless runs too (checked 2026-10-13).
+
 ## `hold`: optional, for batches
 
 `hold` is no longer needed for safety; the guard covers every job. It's a speed
