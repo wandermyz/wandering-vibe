@@ -48,6 +48,9 @@ Use a `Save*` output node (e.g. `SaveImage`) for files you want to keep;
 
 Reading the result:
 
+- While it runs you'll see progress such as `job 1/2 running: node 5 KSampler
+  step 57/150 (38%)` or `job 1/2 waiting to start …`. Just let it finish; don't
+  start other ComfyUI work in the meantime.
 - `job 2/4 ok: /path/a.png, /path/b.png` — the files that job saved.
 - `job 3/4 rejected: node 7 PreviewImage: …` — ComfyUI refused the workflow
   before running it (a wrong link type, a missing input, an unknown node, a
