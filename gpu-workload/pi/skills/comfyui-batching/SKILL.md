@@ -1,9 +1,9 @@
 ---
 name: comfyui-batching
-description: Use whenever you queue ComfyUI jobs (POST to 127.0.0.1:8188/prompt, or a script that does) on this machine. The GPU is shared with the LLM you run on, so plan renders as few large batches instead of many small rounds.
+description: Use whenever you run ComfyUI workflows on this machine (anything that would POST to 127.0.0.1:8188/prompt). Run them with the `comfy-render` command, in as few large batches as possible, because the GPU is shared with the LLM you run on.
 ---
 
-# Batch ComfyUI work
+# Running ComfyUI work
 
 You run on **Strata**, a local LLM, and ComfyUI renders on the **same 16 GB
 GPU**. They can't both be loaded, so the GPU is handed over automatically:
@@ -13,42 +13,81 @@ GPU**. They can't both be loaded, so the GPU is handed over automatically:
   unloading clears the cache, it also re-reads this whole conversation from
   the start, at roughly 1 minute per 30K tokens.
 
-You don't manage any of this yourself, and nothing breaks if you don't batch.
-But every round of "render, look, render again" pays that cost twice. Treat
-the advice below as **best effort**: batch when it's natural, and don't bend
-the task out of shape for it.
+You don't manage any of this yourself. But two things matter.
 
-## How to batch
+## 1. Use `comfy-render`, not your own polling script
 
-- **Queue everything for a round up front, then wait once.** Submit all
-  prompts, seeds and variants to `/prompt` first, then poll `/history` until
-  all of them are done. Don't submit a job, wait for it, then submit the next:
-  ComfyUI's queue goes empty between jobs, and the GPU can be handed back to
-  you in that gap.
+```sh
+comfy-render jobs.json
+```
+
+It queues every job, **waits until all of them have finished**, and prints one
+line per job: the files it saved, or ComfyUI's own error. A hand-written
+polling loop is easy to get subtly wrong. If it crashes while jobs are still
+queued, your next request to Strata arrives while ComfyUI holds the GPU, and
+the turn fails with "GPU busy".
+
+You still design the workflows yourself: any nodes, models, LoRAs, prompts,
+seeds and sizes. Write them as ComfyUI **API-format** JSON, the same graph you
+would POST to `/prompt`, in one of three shapes:
+
+```jsonc
+// one workflow
+{"1": {"class_type": "CheckpointLoaderSimple", "inputs": {...}}, "2": {...}}
+
+// several different workflows
+[ {workflow A}, {workflow B} ]
+
+// one base workflow plus variants: each overrides NODE.inputs.NAME
+{"base": {workflow},
+ "jobs": [{"5.inputs.seed": 11}, {"5.inputs.seed": 22}, {"2.inputs.text": "…"}]}
+```
+
+Use a `Save*` output node (e.g. `SaveImage`) for files you want to keep;
+`PreviewImage` writes to ComfyUI's temp folder.
+
+Reading the result:
+
+- `job 2/4 ok: /path/a.png, /path/b.png` — the files that job saved.
+- `job 3/4 rejected: node 7 PreviewImage: …` — ComfyUI refused the workflow
+  before running it (a wrong link type, a missing input, an unknown node, a
+  model file that isn't installed, which also lists the valid names). Fix that
+  node and re-run **only** the jobs that failed. ComfyUI reports the first
+  problem it meets, so a second error may appear after you fix the first.
+- `job 1/4 failed: node 5 KSampler: …` — it ran but errored partway (e.g. out of
+  memory). Add `--verbose` to see where in ComfyUI's code.
+- The last line is the total; the exit code is 0 only if every job saved files.
+
+Writing your own script is still fine for something `comfy-render` can't do.
+If you do, wait until the queue is empty (`GET /queue`) before finishing, even
+if your script hits an error.
+
+## 2. Batch, as a best effort
+
+Every round of "render, look, render again" pays the GPU handover twice. Batch
+when it's natural; don't bend the task out of shape for it.
+
+- **Queue everything for a round in one `comfy-render` call.** Write every
+  prompt for the whole job (all panels, all shots) before rendering anything.
 - **Over-generate instead of re-rolling.** If a panel or shot is risky, render
-  more seeds (e.g. 6–8 instead of 3) and a few prompt variants of it in the
-  same batch. Picking from extras is cheaper than a second round.
-- **Plan all steps before the first render.** Write every prompt for the
-  whole job (all panels, all shots) before submitting anything, so one batch
-  covers it.
+  more seeds (e.g. 6–8 instead of 3) and a few prompt variants in the same
+  batch. Picking from extras is cheaper than a second round.
 - **Put review material in one image.** After a batch, build one contact sheet
-  per round (a grid of thumbnails, labelled) and look at that, instead of
-  opening every output.
-- **Keep tool output short.** Have the render script print a one-line summary
-  (`48 images → cand-*.jpg`), not per-step logs. Everything printed is re-read
-  after each reload.
+  per round (a labelled grid of thumbnails) and look at that, instead of opening
+  every output.
 - **Do non-GPU work outside the batch.** Layout, captions, file moves and
-  contact sheets don't need the GPU. Do them before you queue the batch or
-  after you've reviewed it, not between jobs.
+  contact sheets don't need the GPU. Do them before you queue the batch or after
+  you've reviewed it.
 
-## When a single job is right
+One job at a time is fine when the next prompt really depends on the result
+(tuning one parameter step by step), or when the user asked for exactly one
+image. Say so in your reply if you expect several rounds.
 
-One job at a time is fine when the next prompt really depends on the result,
-for example tuning one parameter step by step, or when the user asked for
-exactly one image. Say so in your reply if you expect several rounds.
+## If you see "GPU busy"
 
-## If a job fails with "GPU busy"
-
-A job that fails with `GPU busy, job not run: …` means your model was busy
-when ComfyUI tried to take the GPU, for instance another conversation is
-using it. Wait a little and queue the job again. Don't retry in a tight loop.
+- A **job** failing with `GPU busy, job not run: …` means your model was busy
+  when ComfyUI tried to take the GPU, for instance because another conversation
+  was using it. Re-run that job a little later.
+- **Your own reply** failing with "the GPU is busy with ComfyUI jobs" means
+  ComfyUI was still rendering when you were asked to continue. It clears when
+  the queue empties.

@@ -17,7 +17,7 @@ A hybrid monorepo and personal assistant workspace. It contains multiple indepen
 - **[voice-memo](voice-memo/)** — iOS voice recorder that uploads recordings to Google Drive (service-account auth), organized by month folders, preserving original created dates. See [voice-memo/CLAUDE.md](voice-memo/CLAUDE.md) for project-specific development reference.
 - **[nav-mcp](nav-mcp/)** — MCP server exposing Google Routes API for travel-time/distance queries from Claude Code. See [nav-mcp/README.md](nav-mcp/README.md) for setup.
 - **[ios-dist](ios-dist/)** — Self-hosted iOS app distribution (ad hoc OTA installs/updates) served over Tailscale from the Mac mini. See [ios-dist/CLAUDE.md](ios-dist/CLAUDE.md) for project-specific development reference.
-- **[gpu-workload](gpu-workload/)**: Linux CLI that hands the single GPU between Strata (local LLM) and ComfyUI; also Strata's `before_load` hook. See [gpu-workload/README.md](gpu-workload/README.md).
+- **[gpu-workload](gpu-workload/)**: Linux CLI that hands the single GPU between Strata (local LLM) and ComfyUI; also Strata's `before_load` hook, the ComfyUI guard node, and `comfy-render` (run a batch of ComfyUI workflows and report outputs/errors). See [gpu-workload/README.md](gpu-workload/README.md).
 
 Each project has its own `docs/` folder for documentation. Project plans should always be saved under `<project_dir>/docs/plans/<YYYY-MM-DD>-<plan-title>.md`.
 
