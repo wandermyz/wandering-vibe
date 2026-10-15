@@ -59,6 +59,10 @@ Reading the result:
   problem it meets, so a second error may appear after you fix the first.
 - `job 1/4 failed: node 5 KSampler: …` — it ran but errored partway (e.g. out of
   memory). Add `--verbose` to see where in ComfyUI's code.
+- `job 2/4 cancelled: cancelled by the user …` — the user stopped that job
+  (from the dashboard or ComfyUI). It is not an error to fix. **Don't re-run
+  it; ask the user why they cancelled** and go on from their answer. The exit
+  code is 4 whenever any job was cancelled.
 - The last line is the total; the exit code is 0 only if every job saved files.
 
 Writing your own script is still fine for something `comfy-render` can't do.
