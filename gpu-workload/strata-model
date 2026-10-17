@@ -1,0 +1,156 @@
+#!/usr/bin/env python3
+"""strata-model: choose which installed Strata model size strata.service serves.
+
+Strata serves one model per server and answers whatever model name a request
+uses, so the size is chosen here, on the server: strata.service runs
+`--config strata-active.json`, a symlink to one `strata-<size>.json`.
+
+  strata-model                show the active size and the installed ones
+  strata-model iq3|iq2|SIZE   switch to it (SIZE as in strata-SIZE.json, e.g. iq3_xxs)
+  strata-model ... --wait N   let an answer Strata is writing finish (up to N s)
+
+Switching unloads Strata if it is loaded (refused while it answers, unless
+--wait), repoints the symlink, restarts the unloaded server (~3 s; the model
+then loads on the next request, through gpu-workload's hook as always) and
+sets pi's default model to match, so pi's labels follow the server.
+
+Exit codes: 0 ok · 1 failed · 2 usage.
+"""
+
+import argparse
+import json
+import os
+import subprocess
+import sys
+import time
+import urllib.error
+import urllib.request
+from pathlib import Path
+
+STRATA_DIR = Path(os.environ.get("STRATA_DIR", Path.home() / "Codebase/Strata"))
+ACTIVE = STRATA_DIR / "strata-active.json"
+UNIT = os.environ.get("GPU_WORKLOAD_STRATA_UNIT", "strata")
+URL = os.environ.get("GPU_WORKLOAD_STRATA_URL", "http://127.0.0.1:2335")
+PI_SETTINGS = Path.home() / ".pi/agent/settings.json"
+PI_PROVIDER = "strata"
+SHORT = {"iq2": "iq2_xs", "iq3": "iq3_xxs"}
+
+
+def _log(msg: str) -> None:
+    print(f"strata-model: {msg}", file=sys.stderr)
+
+
+def _http(method: str, url: str, timeout: float = 10.0):
+    req = urllib.request.Request(url, data=b"{}" if method == "POST" else None, method=method)
+    req.add_header("Content-Type", "application/json")
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            status, raw = resp.status, resp.read()
+    except urllib.error.HTTPError as e:
+        status, raw = e.code, e.read()
+    except (urllib.error.URLError, OSError) as e:
+        return None, str(getattr(e, "reason", e))
+    try:
+        return status, json.loads(raw) if raw else None
+    except json.JSONDecodeError:
+        return status, raw.decode(errors="replace")
+
+
+def installed() -> dict[str, Path]:
+    """Installed sizes: every strata-<size>.json setup wrote (not backups, not the symlink)."""
+    out = {}
+    for p in sorted(STRATA_DIR.glob("strata-*.json")):
+        if p.is_symlink() or p == ACTIVE:
+            continue
+        out[p.stem.removeprefix("strata-")] = p
+    return out
+
+
+def active() -> str | None:
+    if not ACTIVE.is_symlink():
+        return None
+    return Path(os.readlink(ACTIVE)).stem.removeprefix("strata-")
+
+
+def model_name(config: Path) -> str:
+    return json.loads(config.read_text())["model_name"]
+
+
+def show() -> int:
+    act = active()
+    for size, cfg in installed().items():
+        mark = "*" if size == act else " "
+        print(f"{mark} {size:10} {model_name(cfg)}")
+    if act is None:
+        _log(f"{ACTIVE} is not a symlink; run `strata-model SIZE` once")
+    return 0
+
+
+def _set_pi_default(name: str) -> None:
+    if not PI_SETTINGS.exists():
+        return
+    settings = json.loads(PI_SETTINGS.read_text())
+    if settings.get("defaultProvider") != PI_PROVIDER:
+        _log(f"pi's default provider isn't {PI_PROVIDER}; left pi's default model alone")
+        return
+    settings["defaultModel"] = name
+    tmp = PI_SETTINGS.with_suffix(".tmp")
+    tmp.write_text(json.dumps(settings, indent=2) + "\n")
+    tmp.replace(PI_SETTINGS)
+
+
+def switch(size: str, wait: float) -> int:
+    size = SHORT.get(size, size)
+    sizes = installed()
+    if size not in sizes:
+        _log(f"no {STRATA_DIR}/strata-{size}.json; installed: {', '.join(sizes) or 'none'}")
+        return 1
+    name = model_name(sizes[size])
+    if active() != size:
+        code, body = _http("GET", f"{URL}/health")
+        if code == 200 and isinstance(body, dict) and body.get("loaded"):
+            _log("unloading the current model")
+            code, body = _http("POST", f"{URL}/unload" + (f"?wait={int(wait)}" if wait else ""), timeout=wait + 30)
+            status = body.get("status") if isinstance(body, dict) else body
+            if code == 409 or status == "busy":
+                _log("Strata is answering or loading (use --wait SECONDS to let it finish)")
+                return 1
+            if code != 200:
+                _log(f"Strata /unload failed: {code} {body}")
+                return 1
+        tmp = ACTIVE.with_name(ACTIVE.name + ".tmp")
+        tmp.unlink(missing_ok=True)
+        tmp.symlink_to(sizes[size].name)
+        tmp.replace(ACTIVE)
+        r = subprocess.run(["systemctl", "--user", "restart", UNIT], capture_output=True, text=True)
+        if r.returncode != 0:
+            _log(f"systemctl --user restart {UNIT} failed: {r.stderr.strip()}")
+            return 1
+        deadline = time.monotonic() + 60
+        while True:
+            code, body = _http("GET", f"{URL}/health")
+            if code == 200 and isinstance(body, dict):
+                break
+            if time.monotonic() > deadline:
+                _log(f"{UNIT} didn't answer {URL}/health within 60 s")
+                return 1
+            time.sleep(1)
+        if body.get("model") != name:
+            _log(f"{UNIT} serves {body.get('model')}, expected {name}; is it started with --config {ACTIVE}?")
+            return 1
+    _set_pi_default(name)
+    print(f"{size}: {name} (loads on the next request)")
+    return 0
+
+
+def main(argv: list[str] | None = None) -> int:
+    p = argparse.ArgumentParser(prog="strata-model", description=__doc__.split("\n\n")[0])
+    p.add_argument("size", nargs="?", help="iq3, iq2, or a SIZE from strata-SIZE.json")
+    p.add_argument("--wait", type=float, default=0, metavar="SECONDS",
+                   help="let a running answer finish instead of failing")
+    args = p.parse_args(argv)
+    return switch(args.size, args.wait) if args.size else show()
+
+
+if __name__ == "__main__":
+    sys.exit(main())
