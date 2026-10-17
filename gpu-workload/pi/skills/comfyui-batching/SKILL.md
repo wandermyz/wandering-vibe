@@ -18,10 +18,11 @@ You don't manage any of this yourself. But two things matter.
 ## 1. Use `comfy-render`, not your own polling script
 
 ```sh
-comfy-render jobs.json
+comfy-render jobs/<name>.json
 ```
 
-Run it exactly like that:
+Write jobs files to the workspace's `jobs/` folder, never into the ComfyUI
+folder. Run it exactly like that:
 
 - **Don't pipe its output** (no `| tail`, `| head`, `| grep`). Its progress
   lines are how the user follows a long render live; a pipe holds them back
@@ -97,6 +98,10 @@ when it's natural; don't bend the task out of shape for it.
 - **Put review material in one image.** After a batch, build one contact sheet
   per round (a labelled grid of thumbnails) and look at that, instead of opening
   every output.
+- **Scratch files go to the workspace's `intermediate/` folder.** Contact
+  sheets, extracted check frames and other review material that no workflow
+  loads belong there. ComfyUI's `input/` is only for files a workflow reads
+  (e.g. with `LoadImage`); its `output/` is only for deliverables.
 - **Do non-GPU work outside the batch.** Layout, captions, file moves and
   contact sheets don't need the GPU. Do them before you queue the batch or after
   you've reviewed it.
