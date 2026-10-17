@@ -11,7 +11,7 @@ uses, so the size is chosen here, on the server: strata.service runs
 
 Switching unloads Strata if it is loaded (refused while it answers, unless
 --wait), repoints the symlink, restarts the unloaded server (~3 s; the model
-then loads on the next request, through gpu-workload's hook as always) and
+then loads on the next request, through vhotseat's gate as always) and
 sets pi's default model to match, so pi's labels follow the server.
 
 Exit codes: 0 ok · 1 failed · 2 usage.
@@ -29,8 +29,8 @@ from pathlib import Path
 
 STRATA_DIR = Path(os.environ.get("STRATA_DIR", Path.home() / "Codebase/Strata"))
 ACTIVE = STRATA_DIR / "strata-active.json"
-UNIT = os.environ.get("GPU_WORKLOAD_STRATA_UNIT", "strata")
-URL = os.environ.get("GPU_WORKLOAD_STRATA_URL", "http://127.0.0.1:2335")
+UNIT = os.environ.get("STRATA_UNIT", "strata")
+URL = os.environ.get("STRATA_URL", "http://127.0.0.1:2335")
 PI_SETTINGS = Path.home() / ".pi/agent/settings.json"
 PI_PROVIDER = "strata"
 SHORT = {"iq2": "iq2_xs", "iq3": "iq3_xxs"}
