@@ -21,6 +21,16 @@ You don't manage any of this yourself. But two things matter.
 comfy-render jobs.json
 ```
 
+Run it exactly like that:
+
+- **Don't pipe its output** (no `| tail`, `| head`, `| grep`). Its progress
+  lines are how the user follows a long render live; a pipe holds them back
+  until the end.
+- **Don't set a timeout** on the shell command. A batch of videos can take
+  hours, and comfy-render already gives up on its own if nothing progresses
+  for 30 minutes. If you cut it off while jobs are still queued, ComfyUI keeps
+  the GPU and your next request fails with "GPU busy".
+
 It queues every job, **waits until all of them have finished**, and prints one
 line per job: the files it saved, or ComfyUI's own error. A hand-written
 polling loop is easy to get subtly wrong. If it crashes while jobs are still
@@ -63,6 +73,11 @@ Reading the result:
   (from the dashboard or ComfyUI). It is not an error to fix. **Don't re-run
   it; ask the user why they cancelled** and go on from their answer. The exit
   code is 4 whenever any job was cancelled.
+- `job 4/9 timeout: no progress for 1800s; …` — nothing happened for 30
+  minutes, so ComfyUI is probably stuck. Those jobs are **still in ComfyUI's
+  queue**. Tell the user rather than re-running them, since your next
+  request may fail with "GPU busy" until the queue is cleared. The exit code
+  is 3.
 - The last line is the total; the exit code is 0 only if every job saved files.
 
 Writing your own script is still fine for something `comfy-render` can't do.
