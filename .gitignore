@@ -8,3 +8,6 @@ claude-code-slack/web/node_modules/
 
 .claude/worktrees/
 ralph/
+
+__pycache__/
+*.pyc
