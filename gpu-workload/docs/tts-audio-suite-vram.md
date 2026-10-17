@@ -146,8 +146,8 @@ VRAM after /free` after TTS renders, where Strata used to be refused.
    ```sh
    systemctl --user restart comfyui
    comfy-render <an Akine job>           # e.g. the example in ~/.pi/agent/skills/voice-akine/SKILL.md
-   gpu-workload switch strata
-   gpu-workload status                   # expect: mode strata, comfy ≲ 600 MiB
+   vhotseat switch strata
+   vhotseat status                       # expect: mode strata, comfy ≲ 600 MiB
    ```
 
 5. **Check the Qwen placeholder survived.** An update to the downloader, or a
