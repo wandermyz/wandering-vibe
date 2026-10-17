@@ -1,11 +1,28 @@
 # Plan: send the IndexTTS unload fix upstream
 
-**Status:** in progress. Steps 1–2 done 2026-10-16: fork `wandermyz/TTS-Audio-Suite`,
-clone at `~/Codebase/TTS-Audio-Suite` (remotes `origin` = fork, `upstream`),
-branch `fix/indextts2-to-device` with the ported `to()` (uncommitted, not pushed).
-Unit tests: 153 pass; 1 Fish Audio test fails on plain upstream too. ComfyUI
-render tests (step 3) on hold until the GPU is free. No CHANGELOG entry: outside
-PRs #368/#369 didn't add one.
+**Status:** steps 1–3 done 2026-10-16; PR (step 4) not opened yet. Fork
+`wandermyz/TTS-Audio-Suite`, clone at `~/Codebase/TTS-Audio-Suite` (remotes
+`origin` = fork, `upstream`), branch `fix/indextts2-to-device`, commit
+`3539778b` on upstream `3f3832a`, pushed to the fork. PR body in
+[2026-10-16-upstream-indextts-pr-draft.md](2026-10-16-upstream-indextts-pr-draft.md);
+`gh pr create` fails with the fine-grained PAT (403), so the draft PR is opened
+in the browser. No CHANGELOG entry: outside PRs #368/#369 didn't add one.
+
+Test results (2026-10-16, RTX 5070 Ti, upstream `3f3832a` = v5.10.3+2 in
+ComfyUI, Akine render then `POST /free` with `unload_models`):
+
+| Run | Peak | After unload |
+| --- | --- | --- |
+| Unpatched, QwenEmotion loaded | 6706 MiB | 2066 MiB |
+| Fix, QwenEmotion loaded | 6706 MiB | 466 MiB |
+| Fix, QwenEmotion placeholder | 5554 MiB | 498 MiB |
+| Fix, reload after unload (new text) | 5586 MiB | 498 MiB |
+
+Reload rendered fine (conditioning cache rebuilt). Unit tests: 153 pass; 1
+Fish Audio test (`test_custom_override_logs_connected_voice_and_does_not_inherit_alias_language`)
+fails on plain upstream too (our ComfyUI's `folder_paths` lacks
+`get_system_user_directory`). The live install was restored to v5.10.2 + local
+patch and the Qwen placeholder afterwards.
 
 Our local patch to [TTS Audio Suite](https://github.com/diodiogod/TTS-Audio-Suite)
 fixes IndexTTS-2.5 leaving ~2 GB on the GPU after ComfyUI unloads it. The cause,
