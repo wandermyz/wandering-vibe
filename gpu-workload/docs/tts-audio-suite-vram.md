@@ -96,11 +96,25 @@ until the process exits.
 Verified on 2026-10-13: Akine render (ComfyUI at 5554 MiB), then
 `gpu-workload switch strata` succeeded with ComfyUI at 498 MiB.
 
+## Since gpu-workload restarts a heavy ComfyUI (2026-10-16)
+
+Before Strata loads, gpu-workload now restarts an idle ComfyUI whose VRAM
+won't drop below 1500 MiB after `/free`, or that holds more than 4 GiB of
+RAM + swap (see the README). A restart frees everything, so the patch is **no
+longer needed for Strata to load**: without it ComfyUI stays at ~2 GB VRAM,
+and gpu-workload restarts it (~20 s more for that handover) instead of
+refusing Strata. The patch still matters inside
+ComfyUI: its model manager uses the same unload when it swaps models, so a TTS
+render followed by a video in one session starts ~2 GB short. Keep re-applying
+it; it just isn't urgent any more. Sending it upstream is planned in
+[plans/2026-10-16-upstream-indextts-unload-fix.md](plans/2026-10-16-upstream-indextts-unload-fix.md).
+
 ## After a TTS Audio Suite update
 
 Updating the suite (git pull, or "Update" in ComfyUI-Manager) overwrites
 `infer_v2_5.py` and drops the patch. If you forget, you'll see the original
-symptom again: Strata refused with "could not free ComfyUI's ~1500–2100 MiB".
+symptom in a milder form: the event log shows `restarted it: kept ~2000 MiB of
+VRAM after /free` after TTS renders, where Strata used to be refused.
 
 1. **Check whether the patch is still there:**
    ```sh
