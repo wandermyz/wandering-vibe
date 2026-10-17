@@ -101,7 +101,9 @@ when it's natural; don't bend the task out of shape for it.
 - **Scratch files go to the workspace's `intermediate/` folder.** Contact
   sheets, extracted check frames and other review material that no workflow
   loads belong there. ComfyUI's `input/` is only for files a workflow reads
-  (e.g. with `LoadImage`); its `output/` is only for deliverables.
+  (e.g. with `LoadImage`); its `output/` is only for deliverables. When an
+  output image feeds a later workflow (reference, init or start image),
+  move it from `output/` to `input/` with `mv`; don't copy it.
 - **Do non-GPU work outside the batch.** Layout, captions, file moves and
   contact sheets don't need the GPU. Do them before you queue the batch or after
   you've reviewed it.
