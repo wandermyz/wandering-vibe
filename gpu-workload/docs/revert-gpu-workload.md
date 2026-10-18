@@ -10,7 +10,7 @@ On 2026-10-17 the GPU handover moved from the `gpu-workload` script to
 | Thing | Before (gpu-workload) | After (vhotseat) |
 | --- | --- | --- |
 | Strata's hook | `before_load: ["/home/wander/.local/bin/gpu-workload", "hook", "strata-before-load"]` in `~/Codebase/Strata/strata-iq2_xs.json` and `strata-iq3_xxs.json` | `["/home/wander/.local/bin/vhotseat", "gate", "strata"]`. Backups: `strata-*.json.pre-vhotseat` |
-| ComfyUI guard | runs `gpu-workload switch comfy --wait 300` | runs `vhotseat switch comfy --wait 300` (same symlink, `custom_nodes/gpu_workload_guard`, new code) |
+| ComfyUI guard | `custom_nodes/gpu_workload_guard`, runs `gpu-workload switch comfy --wait 300`; env `GPU_WORKLOAD_GUARD*` | `custom_nodes/vhotseat_guard` → `gpu-workload/comfyui/vhotseat_guard`, runs `vhotseat switch comfy --wait 300`; env `VHOTSEAT_GUARD*`, `VHOTSEAT_BIN` (none set) |
 | CLI | `~/.local/bin/gpu-workload` → `gpu-workload/gpu-workload` | `~/.local/bin/vhotseat` → `gpu-workload/vhotseat`; `gpu-workload` removed |
 | Config | none; `GPU_WORKLOAD_*` env vars | `~/.config/vhotseat/config.yaml` |
 | State | `~/.local/state/gpu-workload/` | `~/.local/state/vhotseat/`; the old path is a symlink to it. The lock is still `switch.lock`, so either tool takes the same lock. |
@@ -39,7 +39,9 @@ for f in iq2_xs iq3_xxs; do cp strata-$f.json.pre-vhotseat strata-$f.json; done
 curl -s -X POST -H 'Content-Type: application/json' 'localhost:2335/unload?wait=300' -d '{}'
 systemctl --user restart strata
 
-# 3. The ComfyUI guard from the same checkout, then restart ComfyUI
+# 3. The ComfyUI guard from the same checkout (old name), then restart ComfyUI.
+#    Remove the new one: both installed would each take the GPU before every job.
+rm ~/Codebase/ComfyUI/custom_nodes/vhotseat_guard
 ln -sfn ~/Projects/gpu-workload-rollback/gpu-workload/comfyui/gpu_workload_guard \
         ~/Codebase/ComfyUI/custom_nodes/gpu_workload_guard
 systemctl --user restart comfyui
@@ -75,7 +77,8 @@ side can go back alone, e.g. only step 2 if Strata's gate misbehaves.
 ## Going forward again
 
 Undo the steps: `before_load` back to `vhotseat gate strata` (the current
-files; keep a copy before step 2), the guard symlink back to
-`~/Projects/wandering-vibe/gpu-workload/comfyui/gpu_workload_guard`, the
+files; keep a copy before step 2), remove `custom_nodes/gpu_workload_guard` and
+link `custom_nodes/vhotseat_guard` →
+`~/Projects/wandering-vibe/gpu-workload/comfyui/vhotseat_guard`, the
 config back in place, restart both, `vhotseat doctor`. Then
 `git worktree remove ~/Projects/gpu-workload-rollback`.
