@@ -23,6 +23,13 @@ is **`3eaad1a`**.
 
 ## Revert (about 2 minutes)
 
+**Since 2026-10-18 the leftovers this relied on are deleted**: the
+`strata-*.json.pre-vhotseat` backups and the `~/.local/state/gpu-workload`
+symlink. In step 2, edit `before_load` by hand to
+`["/home/wander/.local/bin/gpu-workload", "hook", "strata-before-load"]`
+instead of copying a backup, and first recreate the state link:
+`ln -s vhotseat ~/.local/state/gpu-workload`.
+
 Do it while nothing is rendering (`vhotseat status`: 0 running / 0 queued).
 
 ```sh
