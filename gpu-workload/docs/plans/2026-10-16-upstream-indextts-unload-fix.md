@@ -1,5 +1,8 @@
 # Plan: send the IndexTTS unload fix upstream
 
+**Done 2026-10-17:** merged as PR #373, released in TTS Audio Suite 5.10.4,
+installed and tested here; the local patch is removed.
+
 **Status:** steps 1–3 done 2026-10-16; PR (step 4) not opened yet. Fork
 `wandermyz/TTS-Audio-Suite`, clone at `~/Codebase/TTS-Audio-Suite` (remotes
 `origin` = fork, `upstream`), branch `fix/indextts2-to-device`, commit
