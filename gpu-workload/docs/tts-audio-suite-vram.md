@@ -47,7 +47,7 @@ though Akine renders use the emotion sliders and never call it.
 
 ### 1. Patch: add `IndexTTS2.to()`
 
-[`../comfyui/tts-audio-suite-indextts-unload.patch`](../comfyui/tts-audio-suite-indextts-unload.patch)
+The local patch (now upstream as [PR #373](https://github.com/diodiogod/TTS-Audio-Suite/pull/373))
 adds a `to(device)` method to `IndexTTS2` in `infer_v2_5.py`. The wrapper uses
 it for both unload and reload. It:
 
