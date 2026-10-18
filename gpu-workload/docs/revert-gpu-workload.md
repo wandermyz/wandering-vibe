@@ -79,6 +79,7 @@ side can go back alone, e.g. only step 2 if Strata's gate misbehaves.
 Undo the steps: `before_load` back to `vhotseat gate strata` (the current
 files; keep a copy before step 2), remove `custom_nodes/gpu_workload_guard` and
 link `custom_nodes/vhotseat_guard` →
-`~/Projects/wandering-vibe/gpu-workload/comfyui/vhotseat_guard`, the
+`~/Projects/vhotseat/integrations/comfyui/vhotseat_guard` (vhotseat moved
+to its own repo on 2026-10-17), `~/.local/bin/vhotseat` → `~/Projects/vhotseat/vhotseat`, the
 config back in place, restart both, `vhotseat doctor`. Then
 `git worktree remove ~/Projects/gpu-workload-rollback`.
