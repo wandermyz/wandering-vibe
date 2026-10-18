@@ -2,9 +2,13 @@
 
 ComfyUI has the [TTS Audio Suite](https://github.com/diodiogod/TTS-Audio-Suite)
 custom node pack installed for the Akine (秋音) voice, which uses
-IndexTTS-2.5. Out of the box, IndexTTS doesn't fully leave the GPU when ComfyUI
-unloads it. We patch the suite locally, and the patch has to be re-applied
-after every suite update.
+IndexTTS-2.5. Up to version 5.10.3, IndexTTS didn't fully leave the GPU when
+ComfyUI unloaded it, and we patched the suite locally.
+
+**Fixed upstream (2026-10-17):** our fix was merged as
+[PR #373](https://github.com/diodiogod/TTS-Audio-Suite/pull/373) and released in
+**5.10.4**, which is installed here. The local patch is gone. What follows is
+the record of the problem; only "QwenEmotion weights set aside" still applies.
 
 ## The problem
 
@@ -43,7 +47,7 @@ though Akine renders use the emotion sliders and never call it.
 
 ### 1. Patch: add `IndexTTS2.to()`
 
-[`../comfyui/tts-audio-suite-indextts-unload.patch`](../comfyui/tts-audio-suite-indextts-unload.patch)
+The local patch (now upstream as [PR #373](https://github.com/diodiogod/TTS-Audio-Suite/pull/373))
 adds a `to(device)` method to `IndexTTS2` in `infer_v2_5.py`. The wrapper uses
 it for both unload and reload. It:
 
@@ -111,46 +115,12 @@ it; it just isn't urgent any more. Sending it upstream is planned in
 
 ## After a TTS Audio Suite update
 
-Updating the suite (git pull, or "Update" in ComfyUI-Manager) overwrites
-`infer_v2_5.py` and drops the patch. If you forget, you'll see the original
-symptom in a milder form: the event log shows `restarted it: kept ~2000 MiB of
-VRAM after /free` after TTS renders, where Strata used to be refused.
+Since 5.10.4 there's no patch to re-apply. If an update ever brings the leak
+back, the symptom is the event log showing `restarted it: kept ~2000 MiB of
+VRAM after /free` after TTS renders; the fix was an `IndexTTS2.to()` that moves
+every part of the engine (see "The fix" above).
 
-1. **Check whether the patch is still there:**
-   ```sh
-   cd ~/Codebase/ComfyUI/custom_nodes/TTS-Audio-Suite
-   grep -n "LOCAL PATCH (gpu-workload)" engines/index_tts/indextts/infer_v2_5.py
-   ```
-   No output means it's gone.
-
-2. **Check whether upstream fixed it.** If `IndexTTS2` now has its own `to()`
-   method, read it before re-applying:
-   ```sh
-   grep -n "    def to(" engines/index_tts/indextts/infer_v2_5.py
-   ```
-   If upstream's version moves `qwen_emo` and the plain tensors, skip to step 4
-   to verify, and drop the patch if the numbers are fine.
-
-3. **Re-apply:**
-   ```sh
-   git apply --check ~/Projects/wandering-vibe/gpu-workload/comfyui/tts-audio-suite-indextts-unload.patch \
-     && git apply ~/Projects/wandering-vibe/gpu-workload/comfyui/tts-audio-suite-indextts-unload.patch
-   ```
-   If `--check` fails, the surrounding code changed. Add the method by hand:
-   put the `to()` from the patch file inside `class IndexTTS2`, after
-   `__init__`, and adjust attribute names if upstream renamed any (for
-   example `qwen_emo`, `emo_matrix`, `cache_*`). Then save a new patch:
-   `git diff > ~/Projects/wandering-vibe/gpu-workload/comfyui/tts-audio-suite-indextts-unload.patch`.
-
-4. **Restart and verify:**
-   ```sh
-   systemctl --user restart comfyui
-   comfy-render <an Akine job>           # e.g. the example in ~/.pi/agent/skills/voice-akine/SKILL.md
-   vhotseat switch strata
-   vhotseat status                       # expect: mode strata, comfy ≲ 600 MiB
-   ```
-
-5. **Check the Qwen placeholder survived.** An update to the downloader, or a
+**Check the Qwen placeholder survived.** An update to the downloader, or a
    new IndexTTS revision, can make it fetch the weights again:
    ```sh
    ls -la ~/Codebase/ComfyUI/models/TTS/IndexTTS/IndexTTS-2.5/qwen0.6bemo4-merge/model.safetensors
