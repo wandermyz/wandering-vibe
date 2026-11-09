@@ -1,0 +1,16 @@
+#!/bin/bash
+set -euo pipefail
+project_dir="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$project_dir"
+export CLANG_MODULE_CACHE_PATH="$project_dir/.build/ModuleCache"
+export SWIFTPM_MODULECACHE_OVERRIDE="$project_dir/.build/ModuleCache"
+swift build -c release -debug-info-format none --disable-sandbox --cache-path "$project_dir/.build/cache" --config-path "$project_dir/.build/config" --security-path "$project_dir/.build/security"
+app_dir="$project_dir/dist/Practice Piano.app"
+mkdir -p "$app_dir/Contents/MacOS" "$app_dir/Contents/Resources"
+binary_dir="$(swift build -c release --show-bin-path --disable-sandbox --cache-path "$project_dir/.build/cache" --config-path "$project_dir/.build/config" --security-path "$project_dir/.build/security")"
+cp "$binary_dir/PracticePiano" "$app_dir/Contents/MacOS/PracticePiano"
+cp "$project_dir/Info.plist" "$app_dir/Contents/Info.plist"
+cp "$project_dir/Resources/PracticePiano.icns" "$app_dir/Contents/Resources/PracticePiano.icns"
+codesign --force --sign - "$app_dir"
+codesign --verify --strict "$app_dir"
+printf 'Built %s\n' "$app_dir"

@@ -1,0 +1,15 @@
+.build/
+dist/
+.DS_Store
+__pycache__/
+
+.swiftpm/
+.env
+.env.*
+*.mid
+*.mid.draft
+*.sf2
+*.dls
+*.caf
+*.exs
+*.aupreset
