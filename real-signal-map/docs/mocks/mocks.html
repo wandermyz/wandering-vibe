@@ -1,0 +1,277 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>signal-map mocks</title>
+<style>
+  :root { --g:#22c55e; --y:#eab308; --o:#f97316; --r:#ef4444; --x:#7c3aed; --ink:#111827; --sub:#6b7280; }
+  * { box-sizing: border-box; }
+  body { margin:0; padding:32px; background:#d9dde3; font-family:-apple-system, "SF Pro Text", "Helvetica Neue", sans-serif; color:var(--ink); }
+  .row { display:flex; gap:36px; align-items:flex-start; }
+  .col { display:flex; flex-direction:column; align-items:center; gap:12px; }
+  .cap { font-size:15px; font-weight:600; color:#374151; }
+  .phone { width:390px; height:844px; border-radius:54px; background:#000; padding:12px; box-shadow:0 20px 40px rgba(0,0,0,.25); }
+  .screen { position:relative; width:100%; height:100%; border-radius:44px; overflow:hidden; background:#f2f2f7; }
+  .status { position:absolute; top:0; left:0; right:0; height:50px; display:flex; justify-content:space-between; align-items:center; padding:6px 30px 0; font-weight:600; font-size:15px; z-index:5; }
+  .island { position:absolute; top:10px; left:50%; transform:translateX(-50%); width:120px; height:34px; background:#000; border-radius:20px; z-index:6; }
+  svg.map { position:absolute; inset:0; }
+  .glass { background:rgba(255,255,255,.86); backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px); box-shadow:0 4px 18px rgba(0,0,0,.12); }
+  .pill { position:absolute; top:58px; left:16px; right:16px; border-radius:18px; padding:10px 14px; display:flex; align-items:center; gap:10px; font-size:14px; z-index:4; }
+  .dot { width:10px; height:10px; border-radius:50%; background:var(--r); box-shadow:0 0 0 4px rgba(239,68,68,.2); }
+  .tag { font-size:12px; font-weight:600; padding:2px 7px; border-radius:6px; background:#e5e7eb; color:#374151; }
+  .sheet { position:absolute; left:0; right:0; bottom:0; border-radius:28px 28px 0 0; padding:10px 18px 30px; z-index:4; }
+  .grab { width:38px; height:5px; border-radius:3px; background:#c7c7cc; margin:0 auto 10px; }
+  .big { font-size:52px; font-weight:700; letter-spacing:-1px; }
+  .unit { font-size:20px; color:var(--sub); font-weight:600; }
+  .stats { display:flex; justify-content:space-between; margin-top:10px; }
+  .stat { text-align:center; flex:1; }
+  .stat b { display:block; font-size:18px; }
+  .stat span { font-size:11px; color:var(--sub); text-transform:uppercase; letter-spacing:.4px; }
+  .btn { margin-top:14px; height:50px; border-radius:14px; display:flex; align-items:center; justify-content:center; font-weight:600; font-size:17px; }
+  .btn.stop { background:#fee2e2; color:#b91c1c; }
+  .chips { display:flex; gap:7px; flex-wrap:wrap; }
+  .chip { font-size:13px; font-weight:600; padding:6px 11px; border-radius:16px; background:#e5e7eb; color:#374151; }
+  .chip.on { background:#111827; color:#fff; }
+  .seg { display:flex; background:#e5e7eb; border-radius:9px; padding:2px; margin-top:12px; }
+  .seg div { flex:1; text-align:center; font-size:13px; font-weight:600; padding:6px 0; border-radius:7px; color:#374151; }
+  .seg .on { background:#fff; box-shadow:0 1px 3px rgba(0,0,0,.15); }
+  .legend { display:flex; align-items:center; gap:4px; font-size:11px; color:var(--sub); margin-top:10px; }
+  .legend i { display:inline-block; width:22px; height:8px; border-radius:2px; }
+  .fab { position:absolute; right:16px; width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:19px; z-index:4; }
+  .tabbar { position:absolute; left:0; right:0; bottom:0; height:82px; display:flex; justify-content:space-around; padding-top:8px; border-top:1px solid rgba(0,0,0,.08); z-index:5; }
+  .tab { text-align:center; font-size:10px; color:#8e8e93; font-weight:500; }
+  .tab .ic { font-size:22px; display:block; }
+  .tab.on { color:#007aff; }
+  .callout { position:absolute; border-radius:16px; padding:12px 14px; width:250px; z-index:4; font-size:13px; }
+  .callout h4 { margin:0 0 6px; font-size:15px; }
+  .kv { display:flex; justify-content:space-between; padding:3px 0; }
+  .kv span:first-child { color:var(--sub); }
+  .list { background:#fff; border-radius:12px; margin:0 16px 22px; }
+  .li { display:flex; justify-content:space-between; align-items:center; padding:12px 14px; font-size:15px; border-bottom:1px solid #e5e5ea; }
+  .li:last-child { border-bottom:none; }
+  .li .v { color:var(--sub); }
+  .hdr { font-size:12px; color:#6d6d72; text-transform:uppercase; margin:0 32px 6px; letter-spacing:.3px; }
+  .foot { font-size:12px; color:#6d6d72; margin:-16px 32px 22px; line-height:1.35; }
+  .toggle { width:51px; height:31px; border-radius:16px; background:#34c759; position:relative; }
+  .toggle:after { content:""; position:absolute; right:2px; top:2px; width:27px; height:27px; border-radius:50%; background:#fff; box-shadow:0 2px 4px rgba(0,0,0,.2); }
+  .bar { height:8px; border-radius:4px; background:#e5e5ea; overflow:hidden; margin-top:8px; }
+  .bar div { height:100%; width:38%; background:#007aff; }
+</style>
+</head>
+<body>
+<div class="row">
+
+<!-- 1. LIVE -->
+<div class="col"><div class="cap">1 · Live drive</div>
+<div class="phone"><div class="screen">
+  <div class="island"></div><div class="status"><span>8:14</span><span>📶 5G ▮</span></div>
+  <svg class="map" id="m1" viewBox="0 0 366 820"></svg>
+  <div class="pill glass"><div class="dot"></div><b>Recording</b><span class="tag">5G · T-Mobile</span><span style="margin-left:auto;color:var(--sub)">42 min</span></div>
+  <div class="fab glass" style="top:118px">➤</div>
+  <div class="sheet glass">
+    <div class="grab"></div>
+    <div style="display:flex;align-items:flex-end;justify-content:space-between">
+      <div><div style="font-size:13px;color:var(--sub);font-weight:600">LAST PROBE · 1s ago</div>
+      <span class="big" style="color:#ca8a04">312</span> <span class="unit">ms</span></div>
+      <svg width="150" height="60" id="spark"></svg>
+    </div>
+    <div class="stats">
+      <div class="stat"><b>1,204</b><span>probes</span></div>
+      <div class="stat"><b>148 ms</b><span>median</span></div>
+      <div class="stat"><b style="color:var(--x)">31</b><span>failed</span></div>
+      <div class="stat"><b>38 km</b><span>distance</span></div>
+    </div>
+    <div class="btn stop">■ Stop recording</div>
+  </div>
+</div></div></div>
+
+<!-- 2. HISTORY / TIME SLICE -->
+<div class="col"><div class="cap">2 · History · time slice</div>
+<div class="phone"><div class="screen">
+  <div class="island"></div><div class="status"><span>21:03</span><span>📶 LTE ▮</span></div>
+  <svg class="map" id="m2" viewBox="0 0 366 820"></svg>
+  <div class="fab glass" style="top:62px">⚙︎</div>
+  <div class="fab glass" style="top:112px">➤</div>
+  <div class="sheet glass" style="padding-bottom:96px">
+    <div class="grab"></div>
+    <div class="chips">
+      <div class="chip">Today</div><div class="chip">24h</div><div class="chip on">7 days</div><div class="chip">30 days</div><div class="chip">All</div><div class="chip">Custom…</div>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-top:12px;font-size:14px">
+      <b>Nov 4, 07:00 → Nov 11, 21:00</b><span style="color:var(--sub)">9,812 pts</span>
+    </div>
+    <svg width="330" height="70" id="timeline" style="margin-top:6px"></svg>
+    <div class="seg"><div class="on">Median</div><div>P90</div><div>Worst</div><div>Fail %</div></div>
+    <div class="legend"><i style="background:var(--g)"></i>&lt;150 <i style="background:var(--y)"></i>&lt;400 <i style="background:var(--o)"></i>&lt;1s <i style="background:var(--r)"></i>≥1s <i style="background:var(--x)"></i>no internet</div>
+  </div>
+  <div class="tabbar glass"><div class="tab"><span class="ic">◉</span>Live</div><div class="tab on"><span class="ic">🗺</span>History</div><div class="tab"><span class="ic">⚙︎</span>Settings</div></div>
+</div></div></div>
+
+<!-- 3. CELL DETAIL -->
+<div class="col"><div class="cap">3 · Tap a spot</div>
+<div class="phone"><div class="screen">
+  <div class="island"></div><div class="status"><span>21:04</span><span>📶 LTE ▮</span></div>
+  <svg class="map" id="m3" viewBox="0 0 366 820"></svg>
+  <div class="callout glass" style="top:200px;left:58px">
+    <h4>Hwy 17 near Glenwood <span class="tag" style="background:#fee2e2;color:#b91c1c">bad</span></h4>
+    <div class="kv"><span>Samples (7 days)</span><b>46 · 4 passes</b></div>
+    <div class="kv"><span>Median / P90</span><b>620 ms / 2.1 s</b></div>
+    <div class="kv"><span>No internet</span><b style="color:var(--x)">17%</b></div>
+    <div class="kv"><span>Radio seen</span><b>LTE 80% · 3G 20%</b></div>
+    <div class="kv"><span>Last pass</span><b>Nov 10, 18:22</b></div>
+    <svg width="222" height="40" id="mini" style="margin-top:6px"></svg>
+    <div style="font-size:11px;color:var(--sub)">latency of each pass through this spot</div>
+  </div>
+  <div class="sheet glass" style="padding-bottom:96px">
+    <div class="grab"></div>
+    <div style="display:flex;justify-content:space-between;font-size:14px"><b>Last 7 days</b><span style="color:var(--sub)">zoomed in → raw trace</span></div>
+    <div class="legend"><i style="background:var(--g)"></i>&lt;150 <i style="background:var(--y)"></i>&lt;400 <i style="background:var(--o)"></i>&lt;1s <i style="background:var(--r)"></i>≥1s <i style="background:var(--x)"></i>no internet</div>
+  </div>
+  <div class="tabbar glass"><div class="tab"><span class="ic">◉</span>Live</div><div class="tab on"><span class="ic">🗺</span>History</div><div class="tab"><span class="ic">⚙︎</span>Settings</div></div>
+</div></div></div>
+
+<!-- 4. SETTINGS -->
+<div class="col"><div class="cap">4 · Settings</div>
+<div class="phone"><div class="screen">
+  <div class="island"></div><div class="status"><span>21:05</span><span>📶 LTE ▮</span></div>
+  <div style="padding:64px 0 0">
+    <div style="font-size:32px;font-weight:700;margin:0 20px 18px">Settings</div>
+    <div class="hdr">Probe</div>
+    <div class="list">
+      <div class="li"><span>Target</span><span class="v">gstatic.com/generate_204 ›</span></div>
+      <div class="li"><span>Every</span><span class="v">5 s or 100 m ›</span></div>
+      <div class="li"><span>Timeout (= no internet)</span><span class="v">4 s ›</span></div>
+      <div class="li"><span>Cellular only</span><div class="toggle"></div></div>
+    </div>
+    <div class="foot">Probes are forced over the cellular radio even when Wi-Fi is connected.</div>
+    <div class="hdr">Storage</div>
+    <div class="list">
+      <div class="li" style="display:block">
+        <div style="display:flex;justify-content:space-between"><span>Max points</span><span class="v">500,000 ›</span></div>
+        <div class="bar"><div></div></div>
+        <div style="font-size:12px;color:var(--sub);margin-top:6px">190,412 used · 9.8 MB · oldest Jun 2, 2026</div>
+      </div>
+      <div class="li"><span>Auto-start when driving</span><div class="toggle"></div></div>
+    </div>
+    <div class="foot">When full, the oldest points are discarded first.</div>
+    <div class="list">
+      <div class="li"><span style="color:#007aff">Export CSV / GPX</span></div>
+      <div class="li"><span style="color:#ff3b30">Delete all data…</span></div>
+    </div>
+  </div>
+  <div class="tabbar glass" style="background:rgba(248,248,248,.95)"><div class="tab"><span class="ic">◉</span>Live</div><div class="tab"><span class="ic">🗺</span>History</div><div class="tab on"><span class="ic">⚙︎</span>Settings</div></div>
+</div></div></div>
+
+</div>
+
+<script>
+const NS = "http://www.w3.org/2000/svg";
+const C = { g:"#22c55e", y:"#eab308", o:"#f97316", r:"#ef4444", x:"#7c3aed" };
+function el(p, tag, a) { const e = document.createElementNS(NS, tag); for (const k in a) e.setAttribute(k, a[k]); p.appendChild(e); return e; }
+function colorFor(ms) { if (ms == null) return C.x; if (ms < 150) return C.g; if (ms < 400) return C.y; if (ms < 1000) return C.o; return C.r; }
+let seed = 7; function rnd() { seed = (seed * 16807) % 2147483647; return seed / 2147483647; }
+
+function baseMap(svg, zoom) {
+  el(svg, "rect", { width:366, height:820, fill:"#eef0e6" });
+  el(svg, "path", { d:"M0 600 C80 560 120 640 200 610 S330 560 366 590 L366 820 L0 820Z", fill:"#aad3f0" });
+  el(svg, "path", { d:"M30 120 h110 v90 h-110z", fill:"#cfe8c3" });
+  el(svg, "path", { d:"M230 330 h100 v120 h-100z", fill:"#cfe8c3" });
+  el(svg, "path", { d:"M250 60 q60 30 80 100 l-40 30 q-50 -60 -80 -70z", fill:"#d6ebcb" });
+  const n = zoom ? 9 : 14;
+  for (let i = 0; i < n; i++) {
+    const x = 366 / n * i + 10, y = 820 / n * i + 10;
+    el(svg, "line", { x1:x, y1:0, x2:x + 30, y2:820, stroke:"#fff", "stroke-width": zoom ? 6 : 3 });
+    el(svg, "line", { x1:0, y1:y, x2:366, y2:y - 20, stroke:"#fff", "stroke-width": zoom ? 6 : 3 });
+  }
+}
+// a winding "highway" route
+function route(t) { return [40 + 290 * t + 40 * Math.sin(t * 9), 780 - 720 * t + 30 * Math.cos(t * 7)]; }
+function latencyAt(t) {
+  if (t > 0.42 && t < 0.52) return rnd() < 0.35 ? null : 700 + rnd() * 1800; // dead zone
+  if (t > 0.30 && t < 0.42) return 250 + rnd() * 500;
+  if (t > 0.70 && t < 0.78) return 350 + rnd() * 700;
+  return 50 + rnd() * 110;
+}
+function highway(svg, w) {
+  const pts = []; for (let i = 0; i <= 200; i++) pts.push(route(i / 200));
+  el(svg, "polyline", { points: pts.map(p => p.join(",")).join(" "), fill:"none", stroke:"#f9d77e", "stroke-width": w, "stroke-linecap":"round" });
+}
+
+// --- Map 1: live trace (partial route, raw segments)
+(function () {
+  const s = document.getElementById("m1"); baseMap(s); highway(s, 9);
+  const N = 120, end = 0.62;
+  for (let i = 0; i < N; i++) {
+    const a = route(end * i / N), b = route(end * (i + 1) / N), ms = latencyAt(end * i / N);
+    el(s, "line", { x1:a[0], y1:a[1], x2:b[0], y2:b[1], stroke:colorFor(ms), "stroke-width":7, "stroke-linecap":"round" });
+  }
+  const p = route(end);
+  el(s, "circle", { cx:p[0], cy:p[1], r:16, fill:"rgba(0,122,255,.2)" });
+  el(s, "circle", { cx:p[0], cy:p[1], r:8, fill:"#007aff", stroke:"#fff", "stroke-width":3 });
+  // sparkline
+  const sp = document.getElementById("spark");
+  const vals = []; for (let i = 0; i < 40; i++) vals.push(latencyAt(0.32 + i * 0.006));
+  vals.forEach((v, i) => {
+    const h = v == null ? 56 : Math.min(56, Math.log10(v) * 18 - 22);
+    el(sp, "rect", { x:i * 3.7, y:58 - h, width:2.6, height:h, rx:1, fill:colorFor(v) });
+  });
+})();
+
+// --- Map 2: aggregated grid over a week
+(function () {
+  const s = document.getElementById("m2"); baseMap(s); highway(s, 5);
+  const cell = 18, cells = {};
+  // several routes over the week
+  const routes = [route, t => [20 + 330 * t, 300 + 60 * Math.sin(t * 6)], t => [200 + 30 * Math.sin(t * 5), 60 + 500 * t]];
+  routes.forEach((r, ri) => {
+    for (let k = 0; k < 400; k++) {
+      const t = rnd(); const [x, y] = r(t); const key = Math.floor(x / cell) + "," + Math.floor(y / cell);
+      const ms = ri === 0 ? latencyAt(t) : (ri === 1 && t > 0.6 && t < 0.75 ? (rnd() < .2 ? null : 500 + rnd() * 800) : 60 + rnd() * 150);
+      (cells[key] = cells[key] || []).push(ms);
+    }
+  });
+  for (const key in cells) {
+    const [cx, cy] = key.split(",").map(Number); const v = cells[key];
+    const ok = v.filter(x => x != null).sort((a, b) => a - b);
+    const failRate = 1 - ok.length / v.length;
+    const med = failRate > 0.25 ? null : ok[Math.floor(ok.length / 2)];
+    el(s, "rect", { x:cx * cell, y:cy * cell, width:cell - 1, height:cell - 1, rx:3, fill:colorFor(med), opacity:.82 });
+  }
+  // timeline histogram w/ selected range
+  const tl = document.getElementById("timeline");
+  const days = 30, w = 330 / (days * 4);
+  for (let i = 0; i < days * 4; i++) {
+    const hourOfDay = i % 4; const commute = hourOfDay === 1 || hourOfDay === 3;
+    const h = (commute ? 20 + rnd() * 30 : rnd() * 6) * (i % 28 > 19 ? 0.2 : 1);
+    const inSel = i >= days * 4 - 30;
+    el(tl, "rect", { x:i * w, y:52 - h, width:Math.max(1, w - 0.6), height:h, fill: inSel ? "#007aff" : "#c7c7cc" });
+  }
+  const sx = 330 - 30 * w;
+  el(tl, "rect", { x:sx, y:0, width:330 - sx, height:54, fill:"rgba(0,122,255,.08)", stroke:"#007aff", "stroke-width":1.5, rx:4 });
+  [sx, 329].forEach(x => el(tl, "rect", { x:x - 4, y:14, width:8, height:26, rx:3, fill:"#fff", stroke:"#007aff", "stroke-width":1.5 }));
+  ["Oct 12", "Oct 19", "Oct 26", "Nov 2", "Nov 9"].forEach((d, i) => { const t = el(tl, "text", { x:i * 74 + 8, y:68, "font-size":10, fill:"#8e8e93" }); t.textContent = d; });
+})();
+
+// --- Map 3: zoomed in, multiple passes, selected spot
+(function () {
+  const s = document.getElementById("m3"); baseMap(s, true);
+  const z = t => { const [x, y] = route(0.36 + t * 0.2); return [(x - 120) * 2.6 + 60, (y - 380) * 2.0 + 340]; };
+  const pts = []; for (let i = 0; i <= 100; i++) pts.push(z(i / 100));
+  el(s, "polyline", { points: pts.map(p => p.join(",")).join(" "), fill:"none", stroke:"#f9d77e", "stroke-width":22, "stroke-linecap":"round" });
+  for (let pass = 0; pass < 4; pass++) {
+    const off = (pass - 1.5) * 4;
+    for (let i = 0; i < 60; i++) {
+      const t = i / 60, a = z(t), b = z(t + 1 / 60), ms = latencyAt(0.36 + t * 0.2);
+      el(s, "line", { x1:a[0] + off, y1:a[1], x2:b[0] + off, y2:b[1], stroke:colorFor(ms), "stroke-width":3.5, "stroke-linecap":"round" });
+    }
+  }
+  const p = z(0.42);
+  el(s, "circle", { cx:p[0], cy:p[1], r:26, fill:"rgba(17,24,39,.12)", stroke:"#111827", "stroke-width":2, "stroke-dasharray":"4 3" });
+  const mini = document.getElementById("mini");
+  [[620, 900, 450, 2100, null, 700], [480, 380, 1400, 820], [null, null, 2400, 900, 600], [520, 610, 700, 330]].forEach((pass, pi) => {
+    pass.forEach((v, i) => el(mini, "circle", { cx:12 + pi * 56 + i * 8, cy: v == null ? 6 : 36 - Math.min(28, Math.log10(v) * 12 - 24), r:3.2, fill:colorFor(v) }));
+  });
+})();
+</script>
+</body>
+</html>
