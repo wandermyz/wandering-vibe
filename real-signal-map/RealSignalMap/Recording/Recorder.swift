@@ -2,7 +2,7 @@ import CoreLocation
 import SwiftUI
 
 /// Runs whenever the app is in the foreground: tracks location, probes over cellular
-/// every `AppSettings.interval` seconds or `AppSettings.distance` metres, and stores samples.
+/// every `settings.interval` seconds or `settings.distance` metres (read live), and stores samples.
 @MainActor
 final class Recorder: NSObject, ObservableObject, CLLocationManagerDelegate {
     @Published private(set) var isRecording = false
@@ -101,8 +101,8 @@ final class Recorder: NSObject, ObservableObject, CLLocationManagerDelegate {
               -loc.timestamp.timeIntervalSinceNow < 10 else { return }
 
         let now = Date()
-        let dueByTime = lastProbeAt.map { now.timeIntervalSince($0) >= AppSettings.interval } ?? true
-        let dueByDistance = lastProbeLocation.map { loc.distance(from: $0) >= AppSettings.distance } ?? true
+        let dueByTime = lastProbeAt.map { now.timeIntervalSince($0) >= settings.interval } ?? true
+        let dueByDistance = lastProbeLocation.map { loc.distance(from: $0) >= settings.distance } ?? true
         guard dueByTime || dueByDistance else { return }
 
         inFlight = true

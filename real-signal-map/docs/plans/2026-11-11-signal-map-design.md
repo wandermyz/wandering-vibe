@@ -81,7 +81,7 @@ See the chat. The answers will be folded back into this doc before implementatio
 1. Purpose: evaluate online-meeting / video quality → warm-connection RTT is the primary metric; jitter (mean |ΔRTT| per pass) is shown in the spot detail.
 2. Cellular only, always.
 3. Recording auto-starts whenever the app is in the foreground; no start/stop button, no background recording (screen kept awake instead).
-4. Cadence: every 5 s or every 10 m, whichever first (one probe in flight).
+4. Cadence: every 5 s or every 10 m, whichever first (one probe in flight). — 2026-11-12: default distance raised to 50 m; both now configurable in Settings.
 5. Cap: 500k points (adjustable).
 6. No dual-SIM handling.
 7. No export, no per-trip picker.

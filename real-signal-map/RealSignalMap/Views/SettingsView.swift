@@ -16,7 +16,12 @@ struct SettingsView: View {
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
                         .onSubmit { settings.probeURL = urlDraft }
-                    LabeledContent("Every", value: "\(Int(AppSettings.interval)) s or \(Int(AppSettings.distance)) m")
+                    Picker("Every (time)", selection: $settings.interval) {
+                        ForEach(AppSettings.intervalChoices, id: \.self) { Text("\(Int($0)) s").tag($0) }
+                    }
+                    Picker("Or every (distance)", selection: $settings.distance) {
+                        ForEach(AppSettings.distanceChoices, id: \.self) { Text("\(Int($0)) m").tag($0) }
+                    }
                     Picker("Timeout (= no internet)", selection: $settings.timeout) {
                         ForEach(AppSettings.timeoutChoices, id: \.self) { Text("\(Int($0)) s").tag($0) }
                     }
@@ -24,7 +29,7 @@ struct SettingsView: View {
                 } header: {
                     Text("Probe")
                 } footer: {
-                    Text("Each probe is an HTTPS request on a kept-alive connection, forced over the cellular radio even when Wi‑Fi is connected. Latency = request round-trip; reconnects are timed separately. Changes apply next time the app comes to the foreground.")
+                    Text("Each probe is an HTTPS request on a kept-alive connection, forced over the cellular radio even when Wi‑Fi is connected. A probe runs when either the time or the distance threshold is reached, whichever comes first. Latency = request round-trip; reconnects are timed separately. Cadence changes apply immediately; target and timeout changes apply next time the app comes to the foreground.")
                 }
 
                 Section {

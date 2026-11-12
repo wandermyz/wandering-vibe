@@ -8,7 +8,7 @@ Design + mocks: [docs/plans/2026-11-11-signal-map-design.md](docs/plans/2026-11-
 
 - **Recording is automatic** while the app is active (`scenePhase == .active`), paused in background. No start/stop button; screen is kept awake while recording. No background location mode.
 - **Probe:** raw HTTP/1.1 `GET` over `NWConnection` + TLS with `requiredInterfaceType = .cellular` (never Wi‑Fi), kept alive. `rtt_ms` = request → full response headers on the warm connection; `setup_ms` = DNS+TCP+TLS when it had to reconnect. Timeout (default 4 s) ⇒ `timeout`; no cellular path ⇒ `noPath`. A kept-alive connection that the server closed is retried once silently.
-- **Cadence:** every 5 s or 10 m moved, whichever first; one probe in flight at a time; fixes with accuracy > 100 m are skipped.
+- **Cadence:** every N s or M m moved, whichever first (Settings; defaults 5 s / 50 m, read live by the Recorder); one probe in flight at a time; fixes with accuracy > 100 m are skipped.
 - **Storage:** SQLite (`Application Support/samples.sqlite`, WAL) via the C API, one `sample` table indexed on `ts`. Ring buffer: default cap 500k; when count > cap·1.01 delete `id <= maxId - cap` (ids are contiguous because only prefixes are deleted). Writes batched every 10 samples / 30 s / on background, on a serial queue.
 - **History:** time range presets + timeline histogram with drag handles; viewport query padded 25%. Map width ≤ 3 km ⇒ raw colored trace; wider ⇒ grid cells (25 m–50 km, ~45 across) colored by Median / P90 / Worst / Fail %. Cells with >25% failures are purple. Tap ⇒ stats card (median, P90, jitter, fail %, radio mix, per-pass strips).
 
