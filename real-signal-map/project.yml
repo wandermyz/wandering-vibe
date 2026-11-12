@@ -1,0 +1,50 @@
+name: RealSignalMap
+options:
+  bundleIdPrefix: com.wandermyz
+  deploymentTarget:
+    iOS: "17.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    DEVELOPMENT_TEAM: 68Y3T4J39B
+    CODE_SIGN_STYLE: Automatic
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "1"
+targets:
+  RealSignalMap:
+    type: application
+    platform: iOS
+    sources: [RealSignalMap]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.wandermyz.real-signal-map
+        PRODUCT_NAME: RealSignalMap
+        TARGETED_DEVICE_FAMILY: "1"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: Real Signal Map
+        INFOPLIST_KEY_NSLocationWhenInUseUsageDescription: Real Signal Map tags every connectivity probe with your location so it can draw the map.
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
+        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
+  RealSignalMapTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources: [RealSignalMapTests]
+    dependencies:
+      - target: RealSignalMap
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.wandermyz.real-signal-map.tests
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/RealSignalMap.app/RealSignalMap"
+        BUNDLE_LOADER: "$(TEST_HOST)"
+schemes:
+  RealSignalMap:
+    build:
+      targets:
+        RealSignalMap: all
+        RealSignalMapTests: [test]
+    test:
+      targets: [RealSignalMapTests]

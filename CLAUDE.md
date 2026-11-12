@@ -15,6 +15,7 @@ A hybrid monorepo and personal assistant workspace. It contains multiple indepen
 - **[wandering-md](wandering-md/)** — Minimal iOS app for viewing Markdown files with GitHub-style rendering. See [wandering-md/CLAUDE.md](wandering-md/CLAUDE.md) for project-specific development reference.
 - **[od-notes](od-notes/)** — iOS app for browsing and editing Markdown notes from Enterprise OneDrive via File Provider. See [od-notes/CLAUDE.md](od-notes/CLAUDE.md) for project-specific development reference.
 - **[voice-memo](voice-memo/)** — iOS voice recorder that uploads recordings to Google Drive (service-account auth), organized by month folders, preserving original created dates. See [voice-memo/CLAUDE.md](voice-memo/CLAUDE.md) for project-specific development reference.
+- **[real-signal-map](real-signal-map/)** — iOS app that maps real cellular connectivity: probes an HTTPS endpoint over cellular while driving and colors an Apple Map by latency / failure, with time-slice history. See [real-signal-map/CLAUDE.md](real-signal-map/CLAUDE.md) for project-specific development reference.
 - **[nav-mcp](nav-mcp/)** — MCP server exposing Google Routes API for travel-time/distance queries from Claude Code. See [nav-mcp/README.md](nav-mcp/README.md) for setup.
 - **[ios-dist](ios-dist/)** — Self-hosted iOS app distribution (ad hoc OTA installs/updates) served over Tailscale from the Mac mini. See [ios-dist/CLAUDE.md](ios-dist/CLAUDE.md) for project-specific development reference.
 

@@ -1,0 +1,540 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		028EACA8B8CF62C0626D5744 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8D2B0D8BA79349874BF14B4 /* SettingsView.swift */; };
+		0B01BDE64984572ED545C700 /* RadioInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FDD9B5D100FF08A5931B02E /* RadioInfo.swift */; };
+		0E43D587C74C0493D0E4DBF0 /* SampleStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BAC5451C1DC22170A0BCC8C /* SampleStore.swift */; };
+		0F9E66219979A3E462FB7EBC /* Aggregation.swift in Sources */ = {isa = PBXBuildFile; fileRef = F71B5A4E48EA5468F13DB8B8 /* Aggregation.swift */; };
+		0FE0AB9CA3B339089A31B9CA /* Recorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95B980CFBF1E0FC6652ADE77 /* Recorder.swift */; };
+		16A1C7355E804ABFF9636621 /* Sample.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000387EE529214123961F3D8 /* Sample.swift */; };
+		1B9B9350C39D30C04E3F6CAF /* DemoData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80C561FB96DC31A9DE11C706 /* DemoData.swift */; };
+		330B0730897B8B3D99D72F7F /* RealSignalMapApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77AB7075AE80CC1C0F6DBA1E /* RealSignalMapApp.swift */; };
+		516D71890833E0F458E36703 /* SpotDetailCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0149BC8886A37A87FA0467A2 /* SpotDetailCard.swift */; };
+		5DDFBF29DE92B05028CFCB8A /* HistoryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB36578DE0E10F886CFD57AF /* HistoryModel.swift */; };
+		64B95A0A8937D998B5F930BF /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22E748FB2B07C7908ED1846E /* AppSettings.swift */; };
+		665186BCC24C50C58255B80C /* SignalMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3FDE5E5FD1B1859D1786DCE /* SignalMapView.swift */; };
+		71D6631C8818B4B97BAC250F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AABFBA3AC204B80901B63E87 /* Assets.xcassets */; };
+		74C1AABBB650D96DE5B3A876 /* RealSignalMapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD0D9A69458AAA685DB79F0 /* RealSignalMapTests.swift */; };
+		C9DCF6B274A3ADE17E2D40BF /* Prober.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFD8ACA404DB38978F79CDCB /* Prober.swift */; };
+		E5DFFC7EFE0EC731FD83334F /* LiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D15409FEB36B5580D6F5497D /* LiveView.swift */; };
+		EA21D85469086CDF786E9468 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A33B27872E3DD6218AD56D /* Components.swift */; };
+		EF59B19ACC382A8374B7DD5E /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E51923B8D3DD3D2A33214A8F /* HistoryView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		AECBF2617E9F3F2313661D38 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C29599FDB0FBE943A3C7634C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7762AE662A07898DE3C252A9;
+			remoteInfo = RealSignalMap;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		000387EE529214123961F3D8 /* Sample.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sample.swift; sourceTree = "<group>"; };
+		0149BC8886A37A87FA0467A2 /* SpotDetailCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotDetailCard.swift; sourceTree = "<group>"; };
+		1FDD9B5D100FF08A5931B02E /* RadioInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioInfo.swift; sourceTree = "<group>"; };
+		22E748FB2B07C7908ED1846E /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
+		4BAC5451C1DC22170A0BCC8C /* SampleStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleStore.swift; sourceTree = "<group>"; };
+		77AB7075AE80CC1C0F6DBA1E /* RealSignalMapApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealSignalMapApp.swift; sourceTree = "<group>"; };
+		80C561FB96DC31A9DE11C706 /* DemoData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoData.swift; sourceTree = "<group>"; };
+		84A33B27872E3DD6218AD56D /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
+		8AD0D9A69458AAA685DB79F0 /* RealSignalMapTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealSignalMapTests.swift; sourceTree = "<group>"; };
+		8E85D8471FCC17E126B12DC7 /* RealSignalMapTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = RealSignalMapTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		95B980CFBF1E0FC6652ADE77 /* Recorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Recorder.swift; sourceTree = "<group>"; };
+		AABFBA3AC204B80901B63E87 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		AFD8ACA404DB38978F79CDCB /* Prober.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Prober.swift; sourceTree = "<group>"; };
+		BB36578DE0E10F886CFD57AF /* HistoryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryModel.swift; sourceTree = "<group>"; };
+		D15409FEB36B5580D6F5497D /* LiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveView.swift; sourceTree = "<group>"; };
+		D3FDE5E5FD1B1859D1786DCE /* SignalMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignalMapView.swift; sourceTree = "<group>"; };
+		D5567721D6962E44523518F8 /* RealSignalMap.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = RealSignalMap.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D8D2B0D8BA79349874BF14B4 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		E51923B8D3DD3D2A33214A8F /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
+		F71B5A4E48EA5468F13DB8B8 /* Aggregation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Aggregation.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		42CA5A4EAD3DDC8F0D741F6B /* RealSignalMapTests */ = {
+			isa = PBXGroup;
+			children = (
+				8AD0D9A69458AAA685DB79F0 /* RealSignalMapTests.swift */,
+			);
+			path = RealSignalMapTests;
+			sourceTree = "<group>";
+		};
+		436496EC9A69051458ECC158 /* RealSignalMap */ = {
+			isa = PBXGroup;
+			children = (
+				AABFBA3AC204B80901B63E87 /* Assets.xcassets */,
+				65F6D97942F8519E27C4C387 /* App */,
+				F66A7C72875DA1E5618AD48C /* Map */,
+				7097DE8E26B87FF21929CF99 /* Model */,
+				9164ED4C2568A1C5CBFC40FF /* Probe */,
+				81F1C215B7C2F23B7669B598 /* Recording */,
+				6DCB678D9DAEF41F62CD4838 /* Storage */,
+				61495FF5330FA11A4BC82DBA /* Views */,
+			);
+			path = RealSignalMap;
+			sourceTree = "<group>";
+		};
+		61495FF5330FA11A4BC82DBA /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				84A33B27872E3DD6218AD56D /* Components.swift */,
+				E51923B8D3DD3D2A33214A8F /* HistoryView.swift */,
+				D15409FEB36B5580D6F5497D /* LiveView.swift */,
+				D8D2B0D8BA79349874BF14B4 /* SettingsView.swift */,
+				0149BC8886A37A87FA0467A2 /* SpotDetailCard.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		65F6D97942F8519E27C4C387 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				22E748FB2B07C7908ED1846E /* AppSettings.swift */,
+				80C561FB96DC31A9DE11C706 /* DemoData.swift */,
+				77AB7075AE80CC1C0F6DBA1E /* RealSignalMapApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		6DCB678D9DAEF41F62CD4838 /* Storage */ = {
+			isa = PBXGroup;
+			children = (
+				4BAC5451C1DC22170A0BCC8C /* SampleStore.swift */,
+			);
+			path = Storage;
+			sourceTree = "<group>";
+		};
+		7097DE8E26B87FF21929CF99 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				000387EE529214123961F3D8 /* Sample.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		81F1C215B7C2F23B7669B598 /* Recording */ = {
+			isa = PBXGroup;
+			children = (
+				95B980CFBF1E0FC6652ADE77 /* Recorder.swift */,
+			);
+			path = Recording;
+			sourceTree = "<group>";
+		};
+		9164ED4C2568A1C5CBFC40FF /* Probe */ = {
+			isa = PBXGroup;
+			children = (
+				AFD8ACA404DB38978F79CDCB /* Prober.swift */,
+				1FDD9B5D100FF08A5931B02E /* RadioInfo.swift */,
+			);
+			path = Probe;
+			sourceTree = "<group>";
+		};
+		A5D520F1D2BEF1FA71A6AA75 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D5567721D6962E44523518F8 /* RealSignalMap.app */,
+				8E85D8471FCC17E126B12DC7 /* RealSignalMapTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		D959CF1E65C8A974E0816D6E = {
+			isa = PBXGroup;
+			children = (
+				436496EC9A69051458ECC158 /* RealSignalMap */,
+				42CA5A4EAD3DDC8F0D741F6B /* RealSignalMapTests */,
+				A5D520F1D2BEF1FA71A6AA75 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		F66A7C72875DA1E5618AD48C /* Map */ = {
+			isa = PBXGroup;
+			children = (
+				F71B5A4E48EA5468F13DB8B8 /* Aggregation.swift */,
+				BB36578DE0E10F886CFD57AF /* HistoryModel.swift */,
+				D3FDE5E5FD1B1859D1786DCE /* SignalMapView.swift */,
+			);
+			path = Map;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		47BB0E9FE61B0C069293CD65 /* RealSignalMapTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4ACC0A3540341F49253CD1FE /* Build configuration list for PBXNativeTarget "RealSignalMapTests" */;
+			buildPhases = (
+				C8424618733F6C4AD6DE8ED0 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				3F705DB97739CCA2A9B70900 /* PBXTargetDependency */,
+			);
+			name = RealSignalMapTests;
+			packageProductDependencies = (
+			);
+			productName = RealSignalMapTests;
+			productReference = 8E85D8471FCC17E126B12DC7 /* RealSignalMapTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		7762AE662A07898DE3C252A9 /* RealSignalMap */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 76B68589882970DFD72B320B /* Build configuration list for PBXNativeTarget "RealSignalMap" */;
+			buildPhases = (
+				439B83D9E36EC6F91C193343 /* Sources */,
+				1A6B7095D938C504CC8848FD /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RealSignalMap;
+			packageProductDependencies = (
+			);
+			productName = RealSignalMap;
+			productReference = D5567721D6962E44523518F8 /* RealSignalMap.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		C29599FDB0FBE943A3C7634C /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					47BB0E9FE61B0C069293CD65 = {
+						DevelopmentTeam = 68Y3T4J39B;
+						ProvisioningStyle = Automatic;
+					};
+					7762AE662A07898DE3C252A9 = {
+						DevelopmentTeam = 68Y3T4J39B;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = E71B7F2FE97D9D597FF8127E /* Build configuration list for PBXProject "RealSignalMap" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = D959CF1E65C8A974E0816D6E;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = A5D520F1D2BEF1FA71A6AA75 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				7762AE662A07898DE3C252A9 /* RealSignalMap */,
+				47BB0E9FE61B0C069293CD65 /* RealSignalMapTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		1A6B7095D938C504CC8848FD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				71D6631C8818B4B97BAC250F /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		439B83D9E36EC6F91C193343 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0F9E66219979A3E462FB7EBC /* Aggregation.swift in Sources */,
+				64B95A0A8937D998B5F930BF /* AppSettings.swift in Sources */,
+				EA21D85469086CDF786E9468 /* Components.swift in Sources */,
+				1B9B9350C39D30C04E3F6CAF /* DemoData.swift in Sources */,
+				5DDFBF29DE92B05028CFCB8A /* HistoryModel.swift in Sources */,
+				EF59B19ACC382A8374B7DD5E /* HistoryView.swift in Sources */,
+				E5DFFC7EFE0EC731FD83334F /* LiveView.swift in Sources */,
+				C9DCF6B274A3ADE17E2D40BF /* Prober.swift in Sources */,
+				0B01BDE64984572ED545C700 /* RadioInfo.swift in Sources */,
+				330B0730897B8B3D99D72F7F /* RealSignalMapApp.swift in Sources */,
+				0FE0AB9CA3B339089A31B9CA /* Recorder.swift in Sources */,
+				16A1C7355E804ABFF9636621 /* Sample.swift in Sources */,
+				0E43D587C74C0493D0E4DBF0 /* SampleStore.swift in Sources */,
+				028EACA8B8CF62C0626D5744 /* SettingsView.swift in Sources */,
+				665186BCC24C50C58255B80C /* SignalMapView.swift in Sources */,
+				516D71890833E0F458E36703 /* SpotDetailCard.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C8424618733F6C4AD6DE8ED0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				74C1AABBB650D96DE5B3A876 /* RealSignalMapTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		3F705DB97739CCA2A9B70900 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7762AE662A07898DE3C252A9 /* RealSignalMap */;
+			targetProxy = AECBF2617E9F3F2313661D38 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		10C4BF343A4090EA60777153 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Real Signal Map";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Real Signal Map tags every connectivity probe with your location so it can draw the map.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.wandermyz.real-signal-map";
+				PRODUCT_NAME = RealSignalMap;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		10DB56C0A13259C4289AF61A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 68Y3T4J39B;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		31244027508D9BFC855E91C5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.wandermyz.real-signal-map.tests";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RealSignalMap.app/RealSignalMap";
+			};
+			name = Release;
+		};
+		4ED77E337FA037DDB1FC22BD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Real Signal Map";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Real Signal Map tags every connectivity probe with your location so it can draw the map.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.wandermyz.real-signal-map";
+				PRODUCT_NAME = RealSignalMap;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		C517633DC21F26BD89FF25EA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 68Y3T4J39B;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		D945E6A71C9164D473ACB3A2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.wandermyz.real-signal-map.tests";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RealSignalMap.app/RealSignalMap";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		4ACC0A3540341F49253CD1FE /* Build configuration list for PBXNativeTarget "RealSignalMapTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D945E6A71C9164D473ACB3A2 /* Debug */,
+				31244027508D9BFC855E91C5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		76B68589882970DFD72B320B /* Build configuration list for PBXNativeTarget "RealSignalMap" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4ED77E337FA037DDB1FC22BD /* Debug */,
+				10C4BF343A4090EA60777153 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		E71B7F2FE97D9D597FF8127E /* Build configuration list for PBXProject "RealSignalMap" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				10DB56C0A13259C4289AF61A /* Debug */,
+				C517633DC21F26BD89FF25EA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = C29599FDB0FBE943A3C7634C /* Project object */;
+}
