@@ -94,4 +94,30 @@ final class MarkdownRendererTests: XCTestCase {
         let html = MarkdownRenderer.renderHTML(markdown: "Use `code` and $var")
         XCTAssertTrue(html.contains("Use \\`code\\` and \\$var"))
     }
+
+    // MARK: - Mermaid
+
+    func testRenderHTMLRoutesMermaidFencesToMermaid() {
+        let html = MarkdownRenderer.renderHTML(markdown: "```mermaid\ngraph TD; A-->B\n```")
+        XCTAssertTrue(html.contains("lang === 'mermaid'"))
+        XCTAssertTrue(html.contains("<pre class=\"mermaid\">"))
+    }
+
+    func testRenderHTMLLoadsMermaidOnDemand() {
+        let html = MarkdownRenderer.renderHTML(markdown: "test")
+        XCTAssertTrue(html.contains(MarkdownRenderer.mermaidScriptURL))
+        XCTAssertTrue(html.contains("querySelectorAll('pre.mermaid')"))
+        // Not a static <script src>, so plain documents don't pay for the download.
+        XCTAssertFalse(html.contains("<script src=\"\(MarkdownRenderer.mermaidScriptURL)\""))
+    }
+
+    func testRenderHTMLMermaidFollowsColorScheme() {
+        let html = MarkdownRenderer.renderHTML(markdown: "test")
+        XCTAssertTrue(html.contains("theme: dark ? 'dark' : 'default'"))
+    }
+
+    func testRenderHTMLMermaidHasFallback() {
+        let html = MarkdownRenderer.renderHTML(markdown: "test")
+        XCTAssertTrue(html.contains("showMermaidFallback"))
+    }
 }
