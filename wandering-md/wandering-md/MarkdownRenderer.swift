@@ -1,8 +1,9 @@
 import Foundation
 
 enum MarkdownRenderer {
-    /// Mermaid build loaded on demand when the document contains ```mermaid blocks.
-    static let mermaidScriptURL = "https://cdn.jsdelivr.net/npm/mermaid@11.17.0/dist/mermaid.min.js"
+    /// Pele (https://github.com/obsidianmd/pele) renders ```mermaid blocks to SVG.
+    /// Loaded on demand, only when the document contains a mermaid block.
+    static let mermaidScriptURL = "https://cdn.jsdelivr.net/npm/pele@1.13.0/dist/pele.global.js"
 
     /// Generates a full HTML page that renders the given markdown content
     /// with GitHub-flavored styling using marked.js and github-markdown-css.
@@ -35,18 +36,42 @@ enum MarkdownRenderer {
                 @media (max-width: 767px) {
                     .markdown-body { padding: 16px; }
                 }
-                .markdown-body pre.mermaid {
-                    background: transparent;
-                    padding: 0;
-                    text-align: center;
-                    overflow-x: auto;
+                /* Pele diagram colors, matched to github-markdown-css. */
+                .markdown-body {
+                    --pele-bg: #ffffff;
+                    --pele-fg: #1f2328;
+                    --pele-muted: #59636e;
+                    --pele-line: #59636e;
+                    --pele-surface: #f6f8fa;
+                    --pele-surface-alt: #eff2f5;
+                    --pele-border: #d1d9e0;
+                    --pele-accent: #0969da;
+                    --pele-critical: #cf222e;
+                    --pele-error: #cf222e;
+                    --pele-font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+                    --pele-font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
                 }
-                .markdown-body pre.mermaid:not([data-processed]) {
+                @media (prefers-color-scheme: dark) {
+                    .markdown-body {
+                        --pele-bg: #0d1117;
+                        --pele-fg: #f0f6fc;
+                        --pele-muted: #9198a1;
+                        --pele-line: #9198a1;
+                        --pele-surface: #151b23;
+                        --pele-surface-alt: #212830;
+                        --pele-border: #3d444d;
+                        --pele-accent: #4493f8;
+                        --pele-critical: #f85149;
+                        --pele-error: #f85149;
+                    }
+                }
+                .markdown-body pre.mermaid {
                     visibility: hidden;
                 }
-                .markdown-body pre.mermaid svg {
-                    max-width: 100%;
-                    height: auto;
+                .markdown-body .mermaid-diagram {
+                    display: block;
+                    margin-bottom: 16px;
+                    text-align: center;
                 }
                 .mermaid-error {
                     color: #cf222e;
@@ -104,19 +129,21 @@ enum MarkdownRenderer {
                     node.replaceWith(wrapper);
                 }
 
-                async function renderMermaid(nodes) {
-                    const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                    mermaid.initialize({
-                        startOnLoad: false,
-                        theme: dark ? 'dark' : 'default',
-                        securityLevel: 'strict'
-                    });
+                function renderMermaid(nodes) {
                     for (const node of nodes) {
                         const source = node.textContent;
+                        const container = document.createElement('div');
+                        container.className = 'mermaid-diagram';
+                        node.replaceWith(container);
                         try {
-                            await mermaid.run({ nodes: [node] });
+                            const diagram = pele.mount(container, source);
+                            if (!diagram.result) {
+                                diagram.destroy();
+                                const error = diagram.error;
+                                showMermaidFallback(container, source, (error && error.message) || 'could not render diagram');
+                            }
                         } catch (e) {
-                            showMermaidFallback(node, source, (e && e.message) || String(e));
+                            showMermaidFallback(container, source, (e && e.message) || String(e));
                         }
                     }
                 }

@@ -6,7 +6,7 @@ Minimal iOS app for viewing Markdown files with GitHub-style rendering.
 
 - **SwiftUI app** targeting iOS 16+
 - Renders Markdown via WKWebView using [marked.js](https://github.com/markedjs/marked) and [github-markdown-css](https://github.com/sindresorhus/github-markdown-css) loaded from CDN
-- Renders ```` ```mermaid ```` fenced blocks as diagrams with [Mermaid](https://mermaid.js.org) (pinned in `MarkdownRenderer.mermaidScriptURL`). The script is injected only when the document contains a mermaid block; the theme follows light/dark mode, and if a diagram fails to parse (or Mermaid can't load) the source is shown as a code block with the error above it
+- Renders ```` ```mermaid ```` fenced blocks as SVG diagrams with [Pele](https://github.com/obsidianmd/pele) (Obsidian's small, synchronous Mermaid renderer, pinned in `MarkdownRenderer.mermaidScriptURL`). The script is injected only when the document contains a mermaid block. Colors come from `--pele-*` CSS variables matched to github-markdown-css, so they follow light/dark mode without a re-render. If a diagram can't be drawn (or Pele can't load) the source is shown as a code block with the error above it
 - Registers as a handler for `.md` files via `CFBundleDocumentTypes` and `UTImportedTypeDeclarations` in Info.plist, making it appear in the system Share sheet
 - No persistent storage: files are read on open and never saved
 
