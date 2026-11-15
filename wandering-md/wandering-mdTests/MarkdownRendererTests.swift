@@ -111,9 +111,16 @@ final class MarkdownRendererTests: XCTestCase {
         XCTAssertFalse(html.contains("<script src=\"\(MarkdownRenderer.mermaidScriptURL)\""))
     }
 
+    func testRenderHTMLUsesPele() {
+        let html = MarkdownRenderer.renderHTML(markdown: "test")
+        XCTAssertTrue(MarkdownRenderer.mermaidScriptURL.contains("pele"))
+        XCTAssertTrue(html.contains("pele.mount"))
+    }
+
     func testRenderHTMLMermaidFollowsColorScheme() {
         let html = MarkdownRenderer.renderHTML(markdown: "test")
-        XCTAssertTrue(html.contains("theme: dark ? 'dark' : 'default'"))
+        XCTAssertTrue(html.contains("--pele-bg: #ffffff"))
+        XCTAssertTrue(html.contains("--pele-bg: #0d1117"))
     }
 
     func testRenderHTMLMermaidHasFallback() {
