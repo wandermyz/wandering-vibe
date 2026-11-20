@@ -3,7 +3,7 @@
   "siteTitle": "My Apps",
   "keepBuilds": 5,
   "teamId": "ABCDE12345",
-  "exportMethod": "release-testing",
+  "exportMethod": "debugging",
   "launchdLabel": "com.example.ios-dist",
   "tailscaleHttpsPort": 443,
   "allowedLogins": [],

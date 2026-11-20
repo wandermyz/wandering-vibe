@@ -140,7 +140,7 @@ export function parseConfig(raw: unknown, configPath: string): Config {
     keepBuilds: optInt(raw, 'keepBuilds', where, 1, 1000) ?? 5,
     allowedLogins,
     teamId,
-    exportMethod: optString(raw, 'exportMethod', where) ?? 'release-testing',
+    exportMethod: optString(raw, 'exportMethod', where) ?? 'debugging',
     ascApiKey,
     launchdLabel: optString(raw, 'launchdLabel', where) ?? 'local.ios-dist',
     tailscaleHttpsPort: optInt(raw, 'tailscaleHttpsPort', where, 1, 65535) ?? 443,

@@ -43,7 +43,7 @@ lives next to the config (`~/.ios-dist/` by default).
 See [config.example.json](config.example.json). Notable keys:
 
 - `teamId` — passed as `DEVELOPMENT_TEAM` and to the export options.
-- `exportMethod` — `release-testing` (ad hoc; default), `debugging` (development), `enterprise`.
+- `exportMethod` — `debugging` (development; default), `release-testing` (ad hoc), `enterprise`. Development is the default because ad hoc export needs access to cloud-managed distribution certificates, which an App Store Connect API key may not have ("Cloud signing permission error"). Development-signed builds need Developer Mode enabled on the device.
 - `ascApiKey` — `{ keyPath, keyId, issuerId }` App Store Connect API key for unattended signing.
 - `keepBuilds` — builds retained per app (older ones are pruned on publish).
 - `allowedLogins` — restrict to these Tailscale logins (`Tailscale-User-Login` header).

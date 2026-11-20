@@ -13,7 +13,7 @@ describe('parseConfig', () => {
       host: '127.0.0.1',
       port: 8740,
       keepBuilds: 5,
-      exportMethod: 'release-testing',
+      exportMethod: 'debugging',
       allowedLogins: [],
       projects: {},
     });
